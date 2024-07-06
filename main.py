@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import redis.asyncio as redis
 
 # Load environment variables from .env file
-print("kodun en basi")
+print("kodun en basii")
 
 try:
     load_dotenv()
