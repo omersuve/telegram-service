@@ -13,4 +13,5 @@ WORKDIR /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the command to start the server
-CMD ["python", "main.py"]
+CMD ["pwd"]
+CMD ["python3", "main.py"]
