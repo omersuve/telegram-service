@@ -10,9 +10,5 @@ WORKDIR /app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Define environment variable
-ENV TELETHON_API_ID=<your-api-id>
-ENV TELETHON_API_HASH=<your-api-hash>
-
 # Run the command to start the server
 CMD ["python", "main.py"]
