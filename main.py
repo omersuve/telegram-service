@@ -10,7 +10,7 @@ load_dotenv()
 api_id = int(os.environ.get("TELETHON_API_ID"))
 api_hash = os.environ.get("TELETHON_API_HASH")
 
-print(api_hash)
+# print(api_hash)
 
 chat = 'dexscreener_trendings'
 
@@ -35,7 +35,7 @@ async def handler(event):
     # Publish message to Redis
     try:
         await redis_client.publish('telegram_messages', json.dumps(data))
-        print("Message published successfully")
+        # print("Message published successfully")
     except Exception as e:
         print(f"Failed to publish message to Redis: {e}")
 
@@ -43,7 +43,7 @@ async def handler(event):
 def main():
     try:
         client.start()
-        print("Telegram client started successfully")
+        # print("Telegram client started successfully")
         client.run_until_disconnected()
     except Exception as e:
         print(f"Error in Telegram client: {e}")
