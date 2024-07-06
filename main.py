@@ -10,7 +10,7 @@ load_dotenv()
 api_id = int(os.environ.get("TELETHON_API_ID"))
 api_hash = os.environ.get("TELETHON_API_HASH")
 
-# print(api_hash)
+print(api_hash)
 
 chat = 'dexscreener_trendings'
 
