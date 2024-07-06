@@ -13,8 +13,7 @@ try:
 
     print(api_hash)
 
-    # chat = 'dexscreener_trendings'
-    chat = 'maomaomaocat'
+    chat = 'dexscreener_trendings'
 
     # Use 'session_name' for the session file
     client = TelegramClient("session_name", api_id, api_hash)
