@@ -1,16 +1,17 @@
 import json
 from telethon import TelegramClient, events
-import datetime
 import os
 from dotenv import load_dotenv
 import redis.asyncio as redis
 
 # Load environment variables from .env file
-load_dotenv()
+print("kodun en basi")
 
 try:
-    api_id = int(os.getenv("TELETHON_API_ID"))
-    api_hash = os.getenv("TELETHON_API_HASH")
+    load_dotenv()
+
+    api_id = int(os.environ.get("TELETHON_API_ID"))
+    api_hash = os.environ.get("TELETHON_API_HASH")
 
     # chat = 'maomaomaocat'
     chat = 'dexscreener_trendings'
@@ -50,6 +51,7 @@ except Exception as e:
 
 def main():
     try:
+        print("maine girdi")
         client.start()
         print("Telegram client started successfully")
         client.run_until_disconnected()
