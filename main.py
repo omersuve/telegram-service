@@ -23,7 +23,7 @@ try:
     client = TelegramClient("session_name", api_id, api_hash)
 
     # Connect to Redis
-    redis_url = os.getenv("REDIS_PUBLIC_URL", "redis://localhost:6379/0")
+    redis_url = os.environ.get("REDIS_PUBLIC_URL", "redis://localhost:6379/0")
     redis_client = redis.from_url(redis_url)
 
 
@@ -60,4 +60,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("maine girdi2")
     main()
