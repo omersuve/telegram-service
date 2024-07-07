@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-DISCORD_CHANNEL_ID = int(os.environ.get('DISCORD_CHANNEL_ID'))
+DISCORD_CHANNEL_ID = os.environ.get('DISCORD_CHANNEL_ID')
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 
 # Discord bot setup
