@@ -33,7 +33,6 @@ try:
             "text": message.text,
             "date": message.date.isoformat()
         }
-        print(data)
         # Publish message to Redis
         try:
             await redis_client.publish('telegram_messages', json.dumps(data))
