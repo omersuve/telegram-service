@@ -1,9 +1,10 @@
 import json
-from telethon import TelegramClient, events
 import os
-from dotenv import load_dotenv
-import redis.asyncio as redis
 import pusher
+import redis.asyncio as redis
+from dotenv import load_dotenv
+from telethon import TelegramClient, events
+from discord_message import send_message_to_discord, client  # Import the function and client
 
 try:
     # Load environment variables from .env file
@@ -48,6 +49,10 @@ try:
             await redis_client.ltrim("latest_messages", 0, 9)
             pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
             print("Message published successfully")
+
+            # Send message to Discord
+            await send_message_to_discord(json.dumps(data))
+
         except Exception as err:
             print(f"Failed to publish message to Redis: {err}")
 except Exception as e:

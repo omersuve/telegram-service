@@ -2,3 +2,4 @@ redis~=5.0.7
 Telethon~=1.36.0
 python-dotenv~=1.0.1
 pusher~=3.3.2
+discord.py==2.4.0
