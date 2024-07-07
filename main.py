@@ -11,15 +11,14 @@ try:
     api_id = int(os.environ.get("TELETHON_API_ID"))
     api_hash = os.environ.get("TELETHON_API_HASH")
 
-    # chat = 'dexscreener_trendings'
-    chat = 'maomaomaocat'
+    chat = 'dexscreener_trendings'
+    # chat = 'maomaomaocat'
 
     # Use 'session_name' for the session file
     client = TelegramClient("session_name", api_id, api_hash)
 
     # Connect to Redis
     redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
-    print("redis_url", redis_url)
     redis_client = redis.from_url(redis_url)
 
 
