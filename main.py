@@ -19,6 +19,7 @@ try:
 
     # Connect to Redis
     redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+    print("redis_url", redis_url)
     redis_client = redis.from_url(redis_url)
 
 
@@ -31,12 +32,13 @@ try:
             "text": message.text,
             "date": message.date.isoformat()
         }
+        print(data)
         # Publish message to Redis
         try:
             await redis_client.publish('telegram_messages', json.dumps(data))
-            # print("Message published successfully")
-        except Exception as e:
-            print(f"Failed to publish message to Redis: {e}")
+            print("Message published successfully")
+        except Exception as err:
+            print(f"Failed to publish message to Redis: {err}")
 
 except Exception as e:
     print(e)
