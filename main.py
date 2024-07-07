@@ -3,6 +3,7 @@ from telethon import TelegramClient, events
 import os
 from dotenv import load_dotenv
 import redis.asyncio as redis
+import pusher
 
 try:
     # Load environment variables from .env file
@@ -21,6 +22,15 @@ try:
     redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
     redis_client = redis.from_url(redis_url)
 
+    # Initialize Pusher
+    pusher_client = pusher.Pusher(
+        app_id=os.environ.get("PUSHER_APP_ID"),
+        key=os.environ.get("PUSHER_KEY"),
+        secret=os.environ.get("PUSHER_SECRET"),
+        cluster=os.environ.get("PUSHER_CLUSTER"),
+        ssl=True
+    )
+
 
     @client.on(events.NewMessage(chats=chat))
     async def handler(event):
@@ -34,11 +44,12 @@ try:
         print(data)
         # Publish message to Redis
         try:
-            await redis_client.publish('telegram_messages', json.dumps(data))
+            await redis_client.lpush("latest_messages", json.dumps(data))
+            await redis_client.ltrim("latest_messages", 0, 9)
+            pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
             print("Message published successfully")
         except Exception as err:
             print(f"Failed to publish message to Redis: {err}")
-
 except Exception as e:
     print(e)
 
