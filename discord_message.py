@@ -10,22 +10,26 @@ DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 
 # Discord bot setup
 intents = discord.Intents.default()
-client = discord.Client(intents=intents)
+dc_client = discord.Client(intents=intents)
 
 
-@client.event
+@dc_client.event
 async def on_ready():
-    print(f'Logged in as {client.user}')
+    print(f'Logged in as {dc_client.user}')
 
 
 async def send_message_to_discord(message):
-    await client.wait_until_ready()  # Ensure the client is ready before trying to send a message
-    channel = client.get_channel(DISCORD_CHANNEL_ID)
+    await dc_client.wait_until_ready()  # Ensure the client is ready before trying to send a message
+    channel = dc_client.get_channel(DISCORD_CHANNEL_ID)
     if channel:
         await channel.send(message)
     else:
         print("Channel not found")
 
 
-# Run the bot
-client.run(DISCORD_BOT_TOKEN)
+async def start_discord_bot():
+    await dc_client.start(DISCORD_BOT_TOKEN)
+
+
+async def stop_discord_bot():
+    await dc_client.close()
