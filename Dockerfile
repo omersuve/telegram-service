@@ -1,6 +1,8 @@
 # Use an official Python runtime as a parent image
 FROM python:3.11
+
 ENV PYTHONUNBUFFERED=1
+# Useful for debugging, outputs logs in real-time
 
 # Set the working directory in the container
 WORKDIR /app
