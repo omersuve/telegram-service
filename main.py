@@ -13,8 +13,8 @@ try:
     api_id = int(os.environ.get("TELETHON_API_ID"))
     api_hash = os.environ.get("TELETHON_API_HASH")
 
-    chat = 'dexscreener_trendings'
-    # chat = 'maomaomaocat'
+    # chat = 'dexscreener_trendings'
+    chat = 'maomaomaocat'
 
     # Use 'session_name' for the session file
     client = TelegramClient("session_name", api_id, api_hash)
@@ -47,6 +47,9 @@ try:
         try:
             await redis_client.lpush("latest_messages", json.dumps(data))
             await redis_client.ltrim("latest_messages", 0, 9)
+
+            print("redis pushed and trimmed")
+
             pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
             print("Message published successfully")
 
@@ -54,7 +57,7 @@ try:
             await send_message_to_discord(json.dumps(data))
 
         except Exception as err:
-            print(f"Failed to publish message to Redis: {err}")
+            print(f"Failed to sending message to Redis: {err}")
 except Exception as e:
     print(e)
 
