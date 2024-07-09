@@ -47,8 +47,6 @@ def run_schedule():
 async def handler(event):
     message = event.message
     data = {
-        "group": chat,
-        "sender": message.sender_id,
         "text": message.text,
         "date": message.date.isoformat()
     }
