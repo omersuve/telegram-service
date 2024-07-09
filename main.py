@@ -1,11 +1,15 @@
 import asyncio
 import json
 import os
+import re
 import pusher
 import redis.asyncio as redis
 from dotenv import load_dotenv
 from telethon import TelegramClient, events
-from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord  # Import functions
+from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord
+from trending_sentiment import fetch_tweets_and_analyze
+import schedule
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -33,6 +37,12 @@ pusher_client = pusher.Pusher(
 )
 
 
+def run_schedule():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
 @client_telegram.on(events.NewMessage(chats=chat))
 async def handler(event):
     message = event.message
@@ -55,6 +65,19 @@ async def handler(event):
 
         # Send message to Discord
         await send_message_to_discord(json.dumps(data))
+        # Extract ticker symbol using regex
+        match = re.search(r'Token: \$(\w+)', message.text)
+        if match:
+            ticker = match.group(1)
+            print(f"Extracted ticker: {ticker}")
+
+            # Start the Twitter sentiment analysis and schedule it to run every hour for 4 times
+            async def run_analysis():
+                for _ in range(4):
+                    await fetch_tweets_and_analyze(ticker)
+                    await asyncio.sleep(60)  # Wait for 1 minute
+
+            await asyncio.create_task(run_analysis())
 
     except Exception as err:
         print(f"Failed to sending message to Redis: {err}")
