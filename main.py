@@ -74,7 +74,8 @@ async def handler(event):
             # Start the Twitter sentiment analysis and schedule it to run every hour for 4 times
             async def run_analysis():
                 for _ in range(4):
-                    await fetch_tweets_and_analyze(ticker)
+                    score = await fetch_tweets_and_analyze(ticker)
+                    await send_message_to_discord(str(score))
                     await asyncio.sleep(60)  # Wait for 1 minute
 
             await asyncio.create_task(run_analysis())
