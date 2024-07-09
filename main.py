@@ -47,35 +47,41 @@ def run_schedule():
 async def handler(event):
     message = event.message
     print("message", message)
-    data = {
-        "text": message.text,
-        "date": message.date.isoformat()
-    }
-    print(data)
     # Publish message to Redis
     try:
-        await redis_client.lpush("latest_messages", json.dumps(data))
-        await redis_client.ltrim("latest_messages", 0, 9)
-
-        print("redis pushed and trimmed")
-
-        pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
-        print("Message published successfully")
-
-        # Send message to Discord
-        await send_message_to_discord(json.dumps(data))
         # Extract ticker symbol using regex
         match = re.search(r'Token: \$(\w+)', message.text)
         if match:
             ticker = match.group(1)
             print(f"Extracted ticker: {ticker}")
 
+            score = await fetch_tweets_and_analyze(ticker)
+            await send_message_to_discord(ticker + ": " + str(score))  # DELETE LATER!
+
+            data = {
+                "text": message.text,
+                "date": message.date.isoformat(),
+                "score": score
+            }
+            print(data)
+
+            await redis_client.lpush("latest_messages", json.dumps(data))
+            await redis_client.ltrim("latest_messages", 0, 9)
+
+            print("redis pushed and trimmed")
+
+            pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
+            print("Message published successfully")
+
+            # Send message to Discord
+            await send_message_to_discord(json.dumps(data))
+
             # Start the Twitter sentiment analysis and schedule it to run every hour for 4 times
             async def run_analysis():
-                for _ in range(4):
-                    score = await fetch_tweets_and_analyze(ticker)
-                    await send_message_to_discord(str(score))
-                    await asyncio.sleep(60)  # Wait for 1 minute
+                for _ in range(3):
+                    new_score = await fetch_tweets_and_analyze(ticker)
+                    await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+                    await asyncio.sleep(3600)  # Wait for 1 hour
 
             await asyncio.create_task(run_analysis())
 
