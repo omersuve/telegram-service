@@ -17,20 +17,20 @@ followers_threshold = 1000
 favourites_threshold = 10000
 
 # Define weights
-weight_favorite = 0.3
-weight_retweet = 0.5
-weight_reply = 0.2
-weight_followers = 0.05
-weight_favourites = 0.01
+weight_favorite = 2
+weight_retweet = 3
+weight_reply = 5
+weight_followers = 0.01
+weight_favourites = 0.005
 weight_verified = 15
 
 # Define maximum possible scores based on the weights and reasonable assumptions
 max_tweet_count = 30
-max_favorite_score = 100 * weight_favorite  # Assuming a max of 100
-max_retweet_score = 50 * weight_retweet  # Assuming a max of 50
-max_reply_score = 30 * weight_reply  # Assuming a max of 30
-max_followers_score = 100 * weight_followers  # Assuming a max of 100
-max_favourites_score = 100000 * weight_favourites  # Assuming a max of 1000
+max_favorite_score = 150 * weight_favorite  # Assuming a max of 100
+max_retweet_score = 100 * weight_retweet  # Assuming a max of 50
+max_reply_score = 50 * weight_reply  # Assuming a max of 30
+max_followers_score = 100000 * weight_followers  # Assuming a max of 100
+max_favourites_score = 300000 * weight_favourites  # Assuming a max of 1000
 max_verified_score = weight_verified * max_tweet_count  # Fixed value for verified users
 max_tweet_count_weight = 1 + (max_tweet_count / 30)  # Max of 30 tweets
 
@@ -59,22 +59,28 @@ def calculate_score(tweet: Tweet):
     if tweet.user.followers_count < followers_threshold or tweet.user.favourites_count < favourites_threshold:
         return 0
 
-    print("favorite_count", tweet.favorite_count)
-    print("retweet_count", tweet.retweet_count)
-    print("reply_count", tweet.reply_count)
-    print("followers_count", tweet.user.followers_count)
-    print("favourites_count", tweet.user.favourites_count)
-    print("is_blue_verified", tweet.user.is_blue_verified)
-    print("url", tweet.media)
+    favorite_score = tweet.favorite_count * weight_favorite
+    retweet_score = tweet.retweet_count * weight_retweet
+    reply_score = tweet.reply_count * weight_reply
+    followers_score = tweet.user.followers_count * weight_followers
+    favourites_score = tweet.user.favourites_count * weight_favourites
+    verified_score = tweet.user.is_blue_verified * weight_verified
 
-    # Calculate the score
+    print("favorite_count:", tweet.favorite_count, "-> favorite_score:", favorite_score)
+    print("retweet_count:", tweet.retweet_count, "-> retweet_score:", retweet_score)
+    print("reply_count:", tweet.reply_count, "-> reply_score:", reply_score)
+    print("followers_count:", tweet.user.followers_count, "-> followers_score:", followers_score)
+    print("favourites_count:", tweet.user.favourites_count, "-> favourites_score:", favourites_score)
+    print("is_blue_verified:", tweet.user.is_blue_verified, "-> verified_score:", verified_score)
+    print("url:", tweet.media)
+
     return (
-            (tweet.favorite_count * weight_favorite) +
-            (tweet.retweet_count * weight_retweet) +
-            (tweet.reply_count * weight_reply) +
-            (tweet.user.followers_count * weight_followers) +
-            (tweet.user.favourites_count * weight_favourites) +
-            (tweet.user.is_blue_verified * weight_verified)
+            favorite_score +
+            retweet_score +
+            reply_score +
+            followers_score +
+            favourites_score +
+            verified_score
     )
 
 
@@ -89,19 +95,19 @@ async def fetch_tweets_and_analyze(ticker: str):
     print("search_query", search_query)
 
     now = datetime.now()
-    two_hours_ago = now - timedelta(hours=2)
+    yesterday = now - timedelta(days=1)
 
-    formatted_now = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-    formatted_two_hours_ago = two_hours_ago.strftime("%Y-%m-%dT%H:%M:%SZ")
+    formatted_yesterday = yesterday.strftime("%Y-%m-%d")
 
     try:
+        print('{} since:{} min_retweets:5  min_faves:10'.format(search_query, formatted_yesterday))
         tweets = client.search_tweet(
-            '{} since:{} until:{} min_faves:10 min_retweets:5'.format(search_query, formatted_two_hours_ago,
-                                                                      formatted_now), 'Top', 10)
+            '{} since:{} min_retweets:5  min_faves:10'.format(search_query, formatted_yesterday), 'Top', 10)
 
         total_score = 0
         tweet_count = 0
         for tweet in tweets:
+            print(tweet.full_text)
             if search_query not in tweet.full_text:
                 continue
             sc = calculate_score(tweet)
