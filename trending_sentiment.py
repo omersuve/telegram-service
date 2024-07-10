@@ -13,8 +13,10 @@ load_dotenv()
 # tw_username = os.environ.get('TW_USERNAME')
 
 client = Client('en-US')
+
 # client.login(auth_info_1=tw_username, auth_info_2=tw_mail, password=tw_pass)
 # client.save_cookies("cookies.json")
+
 client.load_cookies("cookies.json")
 
 # Define thresholds
@@ -159,4 +161,4 @@ async def fetch_tweets_and_analyze(ticker: str):
     except Exception as e:
         print(f"Error fetching tweets for {ticker}: {e}")
 
-# asyncio.run(fetch_tweets_and_analyze("BOB"))
+# asyncio.run(fetch_tweets_and_analyze("BOBBY"))
