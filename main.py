@@ -75,12 +75,12 @@ async def handler(event):
             # Send message to Discord
             await send_message_to_discord(json.dumps(data))
 
-            # Start the Twitter sentiment analysis and schedule it to run every hour for 4 times
+            # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
             async def run_analysis():
                 for _ in range(3):
+                    await asyncio.sleep(3600)  # Wait for 1 hour
                     new_score = await fetch_tweets_and_analyze(ticker)
                     await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
-                    await asyncio.sleep(3600)  # Wait for 1 hour
 
             await asyncio.create_task(run_analysis())
 
