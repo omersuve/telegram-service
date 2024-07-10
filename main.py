@@ -56,7 +56,6 @@ async def handler(event):
             print(f"Extracted ticker: {ticker}")
 
             score = await fetch_tweets_and_analyze(ticker)
-            await send_message_to_discord(ticker + ": " + str(score))  # DELETE LATER!
 
             data = {
                 "text": message.text,
