@@ -8,16 +8,21 @@ from datetime import datetime, timedelta
 # Load environment variables from the .env file
 load_dotenv()
 
-# tw_mail = os.environ.get('TW_MAIL')
-# tw_pass = os.environ.get('TW_PASS')
-# tw_username = os.environ.get('TW_USERNAME')
+tw_mail = os.environ.get('TW_MAIL')
+tw_pass = os.environ.get('TW_PASS')
+tw_username = os.environ.get('TW_USERNAME')
 
 client = Client('en-US')
 
-# client.login(auth_info_1=tw_username, auth_info_2=tw_mail, password=tw_pass)
-# client.save_cookies("cookies.json")
-
-client.load_cookies("cookies.json")
+if not os.path.exists('cookies.json'):
+    client.login(
+        auth_info_1=tw_username,
+        auth_info_2=tw_mail,
+        password=tw_pass
+    )
+    client.save_cookies('cookies.json')
+else:
+    client.load_cookies('cookies.json')
 
 # Define thresholds
 followers_threshold = 1000
