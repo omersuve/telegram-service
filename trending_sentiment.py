@@ -14,15 +14,23 @@ tw_username = os.environ.get('TW_USERNAME')
 
 client = Client('en-US')
 
-if not os.path.exists('cookies.json'):
+
+def login_and_save_cookies():
     client.login(
         auth_info_1=tw_username,
         auth_info_2=tw_mail,
         password=tw_pass
     )
     client.save_cookies('cookies.json')
-else:
+    print("Logged in and saved new cookies.")
+
+
+try:
     client.load_cookies('cookies.json')
+    print("Cookies loaded successfully.")
+except Exception as e:
+    print(f"Failed to load cookies: {e}. Logging in again.")
+    login_and_save_cookies()
 
 # Define thresholds
 followers_threshold = 1000
@@ -46,13 +54,13 @@ max_favourites_score = 300000 * weight_favourites  # Assuming a max of 1000
 max_verified_score = weight_verified * max_tweet_count  # Fixed value for verified users
 max_tweet_count_weight = 1 + (max_tweet_count / 30)  # Max of 30 tweets
 
-print("max_favorite_score", max_favorite_score)
-print("max_retweet_score", max_retweet_score)
-print("max_reply_score", max_reply_score)
-print("max_followers_score", max_followers_score)
-print("max_favourites_score", max_favourites_score)
-print("max_verified_score", max_verified_score)
-print("max_tweet_count_weight", max_tweet_count_weight)
+# print("max_favorite_score", max_favorite_score)
+# print("max_retweet_score", max_retweet_score)
+# print("max_reply_score", max_reply_score)
+# print("max_followers_score", max_followers_score)
+# print("max_favourites_score", max_favourites_score)
+# print("max_verified_score", max_verified_score)
+# print("max_tweet_count_weight", max_tweet_count_weight)
 
 # Calculate the total maximum possible score
 max_total_score = (
@@ -166,4 +174,5 @@ async def fetch_tweets_and_analyze(ticker: str):
     except Exception as e:
         print(f"Error fetching tweets for {ticker}: {e}")
 
-# asyncio.run(fetch_tweets_and_analyze("BOBBY"))
+
+asyncio.run(fetch_tweets_and_analyze("BOBBY"))
