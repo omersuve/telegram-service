@@ -172,6 +172,17 @@ async def fetch_tweets_and_analyze(ticker: str):
         return final_score
 
     except Exception as e:
-        print(f"Error fetching tweets for {ticker}: {e}")
+        error_message = str(e)
+        if 'status: 401' in error_message and 'Could not authenticate you' in error_message:
+            print(f"Authentication error: {e}. Re-logging in and saving cookies.")
+            login_and_save_cookies()
+            return await fetch_tweets_and_analyze(ticker)
+        elif 'status: 429' in error_message and 'Rate limit exceeded' in error_message:
+            print(f"Rate limit exceeded: {e}. Waiting for 15 minutes before retrying.")
+            await asyncio.sleep(15 * 60)  # Wait for 15 minutes
+            return await fetch_tweets_and_analyze(ticker)  # Retry after waiting
+        else:
+            print(f"Error fetching tweets for {ticker}: {e}")
+            return None
 
 # asyncio.run(fetch_tweets_and_analyze("BOBBY"))
