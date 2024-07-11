@@ -96,8 +96,6 @@ async def start_telegram_client():
 
 async def main():
     try:
-        await fetch_tweets_and_analyze("BOBBY")
-
         # Start the Discord bot and Telegram client concurrently
         await asyncio.gather(
             start_discord_bot(),
