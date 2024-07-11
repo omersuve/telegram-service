@@ -12,8 +12,11 @@ tw_mail = os.environ.get('TW_MAIL')
 tw_pass = os.environ.get('TW_PASS')
 tw_username = os.environ.get('TW_USERNAME')
 
-client = Client('en-US')
+proxy = 'http://160.11.12.13:1020'
+client = Client('en-US', proxy=proxy)
 
+
+# client = Client('en-US')
 
 def login_and_save_cookies():
     client.login(
@@ -173,6 +176,3 @@ async def fetch_tweets_and_analyze(ticker: str):
 
     except Exception as e:
         print(f"Error fetching tweets for {ticker}: {e}")
-
-
-asyncio.run(fetch_tweets_and_analyze("BOBBY"))
