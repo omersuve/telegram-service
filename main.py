@@ -2,6 +2,8 @@ import asyncio
 import json
 import os
 import re
+import uuid
+
 import pusher
 import redis.asyncio as redis
 from dotenv import load_dotenv
@@ -54,8 +56,6 @@ async def handler(event):
             ticker = match.group(1)
             print(f"Extracted ticker: {ticker}")
 
-            print("message", message)
-
             # Extract token address using regex from Dexscreener URL
             address_match = re.search(r'dexscreener.com/solana/([a-zA-Z0-9]+)', message.text)
             token_address = address_match.group(1) if address_match else None
@@ -77,10 +77,14 @@ async def handler(event):
             # Fetch Twitter sentiment score
             score = await fetch_tweets_and_analyze(ticker)
 
+            # Generate a unique ID for the message
+            message_id = str(uuid.uuid4())
+
             data = {
+                "id": message_id,
                 "text": message.text,
                 "date": message.date.isoformat(),
-                "score": score,
+                "scores": [score, None, None],  # Initialize with the first score and placeholders
                 "rugcheck": rugcheck_data  # Possibly None
             }
             print(data)
@@ -90,7 +94,7 @@ async def handler(event):
 
             print("redis pushed and trimmed")
 
-            pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
+            pusher_client.trigger("my-channel", "my-event", {"message": "DATA CHANGED!"})
             print("Message published successfully")
 
             # Send message to Discord
@@ -98,10 +102,20 @@ async def handler(event):
 
             # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
             async def run_analysis():
-                for _ in range(3):
-                    await asyncio.sleep(5400)  # Wait for 1.5 hour
+                for i in range(2):
+                    await asyncio.sleep(1800)  # Wait for 0.5 hour
                     new_score = await fetch_tweets_and_analyze(ticker)
-                    await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+                    # Retrieve the list of messages from Redis
+                    messages = await redis_client.lrange("latest_messages", 0, -1)
+                    for idx, msg in enumerate(messages):
+                        msg_data = json.loads(msg)
+                        if msg_data["id"] == message_id:
+                            msg_data["scores"][i + 1] = new_score  # Update the scores array
+                            await redis_client.lset("latest_messages", idx,
+                                                    json.dumps(msg_data))  # Update the message in Redis
+                            pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(msg_data)})
+                            await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+                            break
 
             await asyncio.create_task(run_analysis())
 
