@@ -54,7 +54,7 @@ async def handler(event):
             ticker = match.group(1)
             print(f"Extracted ticker: {ticker}")
 
-            print("message.text", message.text)
+            print("message", message)
 
             rugcheck_data = None
             # Extract token address using regex from Dexscreener URL
