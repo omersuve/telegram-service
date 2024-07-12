@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from telethon import TelegramClient, events
 from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord
 from trending_sentiment import fetch_tweets_and_analyze
+from rugcheck import get_rugcheck_report
 import schedule
 import time
 
@@ -46,8 +47,6 @@ def run_schedule():
 @client_telegram.on(events.NewMessage(chats=chat))
 async def handler(event):
     message = event.message
-    print("message", message)
-    # Publish message to Redis
     try:
         # Extract ticker symbol using regex
         match = re.search(r'Token: \$(\w+)', message.text)
@@ -55,34 +54,52 @@ async def handler(event):
             ticker = match.group(1)
             print(f"Extracted ticker: {ticker}")
 
-            score = await fetch_tweets_and_analyze(ticker)
+            # Extract token address using regex from Dexscreener URL
+            address_match = re.search(r'Dexscreener: ([a-zA-Z0-9]+)', message.text)
+            if address_match:
+                token_address = address_match.group(1)
+                print(f"Extracted token address: {token_address}")
 
-            data = {
-                "text": message.text,
-                "date": message.date.isoformat(),
-                "score": score
-            }
-            print(data)
+                # Fetch Twitter sentiment score
+                score = await fetch_tweets_and_analyze(ticker)
 
-            await redis_client.lpush("latest_messages", json.dumps(data))
-            await redis_client.ltrim("latest_messages", 0, 9)
+                # Fetch RugCheck report
+                rugcheck_report = get_rugcheck_report(token_address)
+                rugcheck_data = None
+                if rugcheck_report:
+                    rugcheck_data = {
+                        "risks": rugcheck_report.get("risks"),
+                        "totalLPProviders": rugcheck_report.get("totalLPProviders"),
+                        "totalMarketLiquidity": rugcheck_report.get("totalMarketLiquidity")
+                    }
 
-            print("redis pushed and trimmed")
+                data = {
+                    "text": message.text,
+                    "date": message.date.isoformat(),
+                    "score": score,
+                    "rugcheck": rugcheck_data  # Add the rugcheck data to the data
+                }
+                print(data)
 
-            pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
-            print("Message published successfully")
+                await redis_client.lpush("latest_messages", json.dumps(data))
+                await redis_client.ltrim("latest_messages", 0, 9)
 
-            # Send message to Discord
-            await send_message_to_discord(json.dumps(data))
+                print("redis pushed and trimmed")
 
-            # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
-            async def run_analysis():
-                for _ in range(3):
-                    await asyncio.sleep(5400)  # Wait for 1.5 hour
-                    new_score = await fetch_tweets_and_analyze(ticker)
-                    await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+                pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
+                print("Message published successfully")
 
-            await asyncio.create_task(run_analysis())
+                # Send message to Discord
+                await send_message_to_discord(json.dumps(data))
+
+                # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
+                async def run_analysis():
+                    for _ in range(3):
+                        await asyncio.sleep(5400)  # Wait for 1.5 hour
+                        new_score = await fetch_tweets_and_analyze(ticker)
+                        await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+
+                await asyncio.create_task(run_analysis())
 
     except Exception as err:
         print(f"Failed to sending message to Redis: {err}")
