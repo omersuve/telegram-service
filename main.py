@@ -56,11 +56,13 @@ async def handler(event):
 
             print("message", message)
 
-            rugcheck_data = None
             # Extract token address using regex from Dexscreener URL
-            address_match = re.search(r'Dexscreener: ([a-zA-Z0-9]+)', message.text)
-            if address_match:
-                token_address = address_match.group(1)
+            address_match = re.search(r'dexscreener.com/solana/([a-zA-Z0-9]+)', message.text)
+            token_address = address_match.group(1) if address_match else None
+
+            rugcheck_data = None
+
+            if token_address:
                 print(f"Extracted token address: {token_address}")
 
                 # Fetch RugCheck report
