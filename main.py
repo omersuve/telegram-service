@@ -54,18 +54,17 @@ async def handler(event):
             ticker = match.group(1)
             print(f"Extracted ticker: {ticker}")
 
+            print("message.text", message.text)
+
+            rugcheck_data = None
             # Extract token address using regex from Dexscreener URL
             address_match = re.search(r'Dexscreener: ([a-zA-Z0-9]+)', message.text)
             if address_match:
                 token_address = address_match.group(1)
                 print(f"Extracted token address: {token_address}")
 
-                # Fetch Twitter sentiment score
-                score = await fetch_tweets_and_analyze(ticker)
-
                 # Fetch RugCheck report
                 rugcheck_report = get_rugcheck_report(token_address)
-                rugcheck_data = None
                 if rugcheck_report:
                     rugcheck_data = {
                         "risks": rugcheck_report.get("risks"),
@@ -73,33 +72,36 @@ async def handler(event):
                         "totalMarketLiquidity": rugcheck_report.get("totalMarketLiquidity")
                     }
 
-                data = {
-                    "text": message.text,
-                    "date": message.date.isoformat(),
-                    "score": score,
-                    "rugcheck": rugcheck_data  # Add the rugcheck data to the data
-                }
-                print(data)
+            # Fetch Twitter sentiment score
+            score = await fetch_tweets_and_analyze(ticker)
 
-                await redis_client.lpush("latest_messages", json.dumps(data))
-                await redis_client.ltrim("latest_messages", 0, 9)
+            data = {
+                "text": message.text,
+                "date": message.date.isoformat(),
+                "score": score,
+                "rugcheck": rugcheck_data  # Possibly None
+            }
+            print(data)
 
-                print("redis pushed and trimmed")
+            await redis_client.lpush("latest_messages", json.dumps(data))
+            await redis_client.ltrim("latest_messages", 0, 9)
 
-                pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
-                print("Message published successfully")
+            print("redis pushed and trimmed")
 
-                # Send message to Discord
-                await send_message_to_discord(json.dumps(data))
+            pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(data)})
+            print("Message published successfully")
 
-                # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
-                async def run_analysis():
-                    for _ in range(3):
-                        await asyncio.sleep(5400)  # Wait for 1.5 hour
-                        new_score = await fetch_tweets_and_analyze(ticker)
-                        await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+            # Send message to Discord
+            await send_message_to_discord(json.dumps(data))
 
-                await asyncio.create_task(run_analysis())
+            # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
+            async def run_analysis():
+                for _ in range(3):
+                    await asyncio.sleep(5400)  # Wait for 1.5 hour
+                    new_score = await fetch_tweets_and_analyze(ticker)
+                    await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+
+            await asyncio.create_task(run_analysis())
 
     except Exception as err:
         print(f"Failed to sending message to Redis: {err}")
