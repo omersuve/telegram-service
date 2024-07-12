@@ -8,29 +8,60 @@ from datetime import datetime, timedelta
 # Load environment variables from the .env file
 load_dotenv()
 
-tw_mail = os.environ.get('TW_MAIL')
-tw_pass = os.environ.get('TW_PASS')
-tw_username = os.environ.get('TW_USERNAME')
+# Define credentials for multiple accounts
+accounts = [
+    {
+        'username': os.environ.get('TW_USERNAME'),
+        'email': os.environ.get('TW_MAIL'),
+        'password': os.environ.get('TW_PASS'),
+        'cookie_file': 'cookies1.json'
+    },
+    {
+        'username': os.environ.get('TW_USERNAME_2'),
+        'email': os.environ.get('TW_MAIL_2'),
+        'password': os.environ.get('TW_PASS_2'),
+        'cookie_file': 'cookies2.json'
+    },
+    {
+        'username': os.environ.get('TW_USERNAME_3'),
+        'email': os.environ.get('TW_MAIL_3'),
+        'password': os.environ.get('TW_PASS_3'),
+        'cookie_file': 'cookies3.json'
+    },
+    {
+        'username': os.environ.get('TW_USERNAME_4'),
+        'email': os.environ.get('TW_MAIL_4'),
+        'password': os.environ.get('TW_PASS_4'),
+        'cookie_file': 'cookies4.json'
+    }
+]
+
+current_account_index = 0
 
 client = Client('en-US')
 
 
-def login_and_save_cookies():
+def login_and_save_cookies(account):
     client.login(
-        auth_info_1=tw_username,
-        auth_info_2=tw_mail,
-        password=tw_pass
+        auth_info_1=account['username'],
+        auth_info_2=account['email'],
+        password=account['password']
     )
-    client.save_cookies('cookies.json')
-    print("Logged in and saved new cookies.")
+    client.save_cookies(account['cookie_file'])
+    print(f"Logged in and saved new cookies for {account['username']}.")
 
 
-try:
-    client.load_cookies('cookies.json')
-    print("Cookies loaded successfully.")
-except Exception as e:
-    print(f"Failed to load cookies: {e}. Logging in again.")
-    login_and_save_cookies()
+def load_cookies(account):
+    try:
+        client.load_cookies(account['cookie_file'])
+        print(f"Cookies loaded successfully for {account['username']}.")
+    except Exception as e:
+        print(f"Failed to load cookies for {account['username']}: {e}. Logging in again.")
+        login_and_save_cookies(account)
+
+
+# Load cookies for the initial account
+load_cookies(accounts[current_account_index])
 
 # Define thresholds
 followers_threshold = 1000
@@ -111,6 +142,12 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
 
 
 async def fetch_tweets_and_analyze(ticker: str):
+    global current_account_index
+    account = accounts[current_account_index]
+
+    # Load cookies for the current account
+    load_cookies(account)
+
     search_query = f"${ticker}"
     print("search_query", search_query)
 
@@ -169,20 +206,12 @@ async def fetch_tweets_and_analyze(ticker: str):
         final_score = scale_score_to_range(weighted_score, max_total_score)
 
         print("total_score", final_score)
+        # Move to the next account for the next request
+        current_account_index = (current_account_index + 1) % len(accounts)
+
         return final_score
 
-    except Exception as e:
-        error_message = str(e)
-        if 'status: 401' in error_message and 'Could not authenticate you' in error_message:
-            print(f"Authentication error: {e}. Re-logging in and saving cookies.")
-            login_and_save_cookies()
-            return await fetch_tweets_and_analyze(ticker)
-        elif 'status: 429' in error_message and 'Rate limit exceeded' in error_message:
-            print(f"Rate limit exceeded: {e}. Waiting for 15 minutes before retrying.")
-            await asyncio.sleep(15 * 60)  # Wait for 15 minutes
-            return await fetch_tweets_and_analyze(ticker)  # Retry after waiting
-        else:
-            print(f"Error fetching tweets for {ticker}: {e}")
-            return None
+    except Exception as err:
+        print(f"Error fetching tweets for {ticker}: {err}")
 
-# asyncio.run(fetch_tweets_and_analyze("BOBBY"))
+# asyncio.run(fetch_tweets_and_analyze("HOTT"))
