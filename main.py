@@ -21,7 +21,6 @@ api_id = int(os.environ.get("TELETHON_API_ID"))
 api_hash = os.environ.get("TELETHON_API_HASH")
 
 chat = 'dexscreener_trendings'
-# chat = 'maomaomaocat'
 
 # Use 'session_name' for the session file
 client_telegram = TelegramClient("session_name", api_id, api_hash)
@@ -98,7 +97,7 @@ async def handler(event):
             print("Message published successfully")
 
             # Send message to Discord
-            await send_message_to_discord(json.dumps(data))
+            await send_message_to_discord(data)
 
             # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
             async def run_analysis():
@@ -114,7 +113,7 @@ async def handler(event):
                             await redis_client.lset("latest_messages", idx,
                                                     json.dumps(msg_data))  # Update the message in Redis
                             pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(msg_data)})
-                            await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+                            # await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
                             break
 
             await asyncio.create_task(run_analysis())

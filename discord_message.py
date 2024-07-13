@@ -1,3 +1,4 @@
+import json
 import os
 import discord
 from dotenv import load_dotenv
@@ -18,11 +19,22 @@ async def on_ready():
     print(f'Logged in as {dc_client.user}')
 
 
+def prepare_message(message_json):
+    text = message_json['text']
+    date = message_json['date']
+    risks = message_json['rugcheck'].get('risks', []) if message_json.get('rugcheck') else []
+
+    formatted_risks = ', '.join(risks) if risks else 'No risks reported'
+
+    formatted_message = f"**Message**: {text}\n**Date**: {date}\n**Risks**: {formatted_risks}"
+    return formatted_message
+
+
 async def send_message_to_discord(message):
     await dc_client.wait_until_ready()  # Ensure the client is ready before trying to send a message
     channel = dc_client.get_channel(DISCORD_CHANNEL_ID)
     if channel:
-        await channel.send(message)
+        await channel.send(prepare_message(message))
     else:
         print("Channel not found")
 
