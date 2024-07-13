@@ -104,12 +104,21 @@ async def handler(event):
                 for i in range(2):
                     await asyncio.sleep(1800)  # Wait for 0.5 hour
                     new_score = await fetch_tweets_and_analyze(ticker)
+                    new_rugcheck_report = get_rugcheck_report(token_address) if token_address else None
+                    new_rugcheck_data = None
+                    if new_rugcheck_report:
+                        new_rugcheck_data = {
+                            "risks": new_rugcheck_report.get("risks"),
+                            "totalLPProviders": new_rugcheck_report.get("totalLPProviders"),
+                            "totalMarketLiquidity": new_rugcheck_report.get("totalMarketLiquidity")
+                        }
                     # Retrieve the list of messages from Redis
                     messages = await redis_client.lrange("latest_messages", 0, -1)
                     for idx, msg in enumerate(messages):
                         msg_data = json.loads(msg)
                         if msg_data["id"] == message_id:
                             msg_data["scores"][i + 1] = new_score  # Update the scores array
+                            msg_data["rugcheck"] = new_rugcheck_data  # Update rugcheck data
                             await redis_client.lset("latest_messages", idx,
                                                     json.dumps(msg_data))  # Update the message in Redis
                             pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(msg_data)})
