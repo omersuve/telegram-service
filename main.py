@@ -50,7 +50,7 @@ async def handler(event):
     message = event.message
     try:
         # Extract ticker symbol using regex
-        match = re.search(r'Token: \$(\w+)', message.text)
+        match = re.search(r'Token: [#$](\w+)', message.text)
         if match:
             ticker = match.group(1)
             print(f"Extracted ticker: {ticker}")
