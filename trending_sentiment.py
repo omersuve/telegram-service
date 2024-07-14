@@ -69,8 +69,8 @@ favourites_threshold = 10000
 
 # Define weights
 weight_favorite = 2
-weight_retweet = 3
-weight_reply = 5
+weight_retweet = 5
+weight_reply = 8
 weight_followers = 0.01
 weight_favourites = 0.005
 weight_verified = 15
@@ -123,7 +123,6 @@ def calculate_score(tweet: Tweet):
     print("followers_count:", tweet.user.followers_count, "-> followers_score:", followers_score)
     print("favourites_count:", tweet.user.favourites_count, "-> favourites_score:", favourites_score)
     print("is_blue_verified:", tweet.user.is_blue_verified, "-> verified_score:", verified_score)
-    print("url:", tweet.media)
 
     return (
             favorite_score +
@@ -157,7 +156,7 @@ async def fetch_tweets_and_analyze(ticker: str):
     formatted_yesterday = yesterday.strftime("%Y-%m-%d")
 
     try:
-        print('{} since:{} min_retweets:5  min_faves:10'.format(search_query, formatted_yesterday))
+        print('{} since:{} min_retweets:4  min_faves:10'.format(search_query, formatted_yesterday))
         tweets = client.search_tweet(
             '{} since:{} min_retweets:5  min_faves:10'.format(search_query, formatted_yesterday), 'Top', 10)
 
@@ -165,7 +164,7 @@ async def fetch_tweets_and_analyze(ticker: str):
         tweet_count = 0
         for tweet in tweets:
             print(tweet.full_text)
-            if search_query not in tweet.full_text:
+            if ticker not in tweet.full_text:
                 continue
             sc = calculate_score(tweet)
             print("sc", sc)
@@ -176,7 +175,7 @@ async def fetch_tweets_and_analyze(ticker: str):
         more_tweets = tweets.next()  # Retrieve more tweets
 
         for tweet in more_tweets:
-            if search_query not in tweet.full_text:
+            if ticker not in tweet.full_text:
                 continue
             sc = calculate_score(tweet)
             print("sc", sc)
@@ -187,7 +186,7 @@ async def fetch_tweets_and_analyze(ticker: str):
         much_more_tweets = more_tweets.next()  # Retrieve more tweets
 
         for tweet in much_more_tweets:
-            if search_query not in tweet.full_text:
+            if ticker not in tweet.full_text:
                 continue
             sc = calculate_score(tweet)
             print("sc", sc)
