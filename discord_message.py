@@ -36,7 +36,6 @@ def prepare_message(message_json):
     dexscreener = lines[3].split(': ')[1]
 
     formatted_message = f"""
-    -------------------------------
     {header}
 
     **Token:** {token}
