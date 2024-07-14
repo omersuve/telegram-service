@@ -45,15 +45,10 @@ def run_schedule():
         time.sleep(1)
 
 
-async def get_image_url(media):
-    if isinstance(media, MessageMediaPhoto):
-        photo = media.photo
-        largest_photo_size = max(photo.sizes, key=lambda size: size.width * size.height)
-        if isinstance(largest_photo_size, PhotoPathSize):
-            return f"https://t.me/{largest_photo_size.location}"
-        elif isinstance(largest_photo_size, PhotoStrippedSize):
-            return f"https://t.me/{largest_photo_size.bytes.decode('utf-8')}"
-    return None
+def get_telegram_image_url(photo):
+    file_id = photo.id
+    access_hash = photo.access_hash
+    return f"https://api.telegram.org/file/bot{api_id}:{api_hash}/{file_id}_{access_hash}.jpg"
 
 
 @client_telegram.on(events.NewMessage(chats=chat))
@@ -88,7 +83,9 @@ async def handler(event):
             score = await fetch_tweets_and_analyze(ticker)
 
             # Get image URL
-            image_url = await get_image_url(message.media)
+            image_url = None
+            if isinstance(message.media, MessageMediaPhoto):
+                image_url = get_telegram_image_url(message.media.photo)
 
             # Generate a unique ID for the message
             message_id = str(uuid.uuid4())
