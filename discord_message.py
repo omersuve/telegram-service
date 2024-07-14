@@ -42,6 +42,7 @@ def prepare_message(message_json):
     **Dexscreener:** {dexscreener}
     **Date:** {date}
     **Risks:** {formatted_risks}
+    
     """
     return formatted_message
 
