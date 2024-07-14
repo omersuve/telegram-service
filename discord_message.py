@@ -30,7 +30,6 @@ def prepare_message(message_json):
 
     header = "🎯 " + lines[0].replace('🔥 ', '').replace('** has just entered Ether Dexscreener hot pairs**',
                                                        '**') + " 🍾"
-
     token = lines[1].split(': ')[1]
     telegram = lines[2].split(': ')[1]
     dexscreener = lines[3].split(': ')[1]
