@@ -3,7 +3,6 @@ import json
 import os
 import re
 import uuid
-from telethon.tl.types import MessageMediaPhoto, PhotoPathSize, PhotoStrippedSize
 import pusher
 import redis.asyncio as redis
 from dotenv import load_dotenv
@@ -45,12 +44,6 @@ def run_schedule():
         time.sleep(1)
 
 
-def get_telegram_image_url(photo):
-    file_id = photo.id
-    access_hash = photo.access_hash
-    return f"https://api.telegram.org/file/bot{api_id}:{api_hash}/{file_id}_{access_hash}.jpg"
-
-
 @client_telegram.on(events.NewMessage(chats=chat))
 async def handler(event):
     message = event.message
@@ -82,11 +75,6 @@ async def handler(event):
             # Fetch Twitter sentiment score
             score = await fetch_tweets_and_analyze(ticker)
 
-            # Get image URL
-            image_url = None
-            if isinstance(message.media, MessageMediaPhoto):
-                image_url = get_telegram_image_url(message.media.photo)
-
             # Generate a unique ID for the message
             message_id = str(uuid.uuid4())
 
@@ -95,8 +83,7 @@ async def handler(event):
                 "text": message.text,
                 "date": message.date.isoformat(),
                 "scores": [score, None, None],  # Initialize with the first score and placeholders
-                "rugcheck": rugcheck_data,  # Possibly None
-                "image_url": image_url  # Add image URL to the data
+                "rugcheck": rugcheck_data  # Possibly None
             }
             print(data)
 
