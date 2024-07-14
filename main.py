@@ -3,7 +3,7 @@ import json
 import os
 import re
 import uuid
-from telethon.tl.types import MessageMediaPhoto
+from telethon.tl.types import MessageMediaPhoto, PhotoPathSize, PhotoStrippedSize
 import pusher
 import redis.asyncio as redis
 from dotenv import load_dotenv
@@ -45,13 +45,14 @@ def run_schedule():
         time.sleep(1)
 
 
-def extract_image_reference(message):
-    if isinstance(message.media, MessageMediaPhoto):
-        photo = message.media.photo
-        file_id = photo.id
-        access_hash = photo.access_hash
-        # Construct the URL using Telegram's CDN
-        return f"https://cdn4.telegram-cdn.org/file/{file_id}_{access_hash}.jpg"
+async def get_image_url(media):
+    if isinstance(media, MessageMediaPhoto):
+        photo = media.photo
+        largest_photo_size = max(photo.sizes, key=lambda size: size.width * size.height)
+        if isinstance(largest_photo_size, PhotoPathSize):
+            return f"https://t.me/{largest_photo_size.location}"
+        elif isinstance(largest_photo_size, PhotoStrippedSize):
+            return f"https://t.me/{largest_photo_size.bytes.decode('utf-8')}"
     return None
 
 
@@ -86,8 +87,8 @@ async def handler(event):
             # Fetch Twitter sentiment score
             score = await fetch_tweets_and_analyze(ticker)
 
-            # Extract image reference
-            image_url = extract_image_reference(message)
+            # Get image URL
+            image_url = await get_image_url(message.media)
 
             # Generate a unique ID for the message
             message_id = str(uuid.uuid4())
@@ -98,7 +99,7 @@ async def handler(event):
                 "date": message.date.isoformat(),
                 "scores": [score, None, None],  # Initialize with the first score and placeholders
                 "rugcheck": rugcheck_data,  # Possibly None
-                "image_url": image_url  # Add image URL
+                "image_url": image_url  # Add image URL to the data
             }
             print(data)
 
