@@ -103,7 +103,7 @@ async def handler(event):
             await redis_client.lpush("latest_messages", json.dumps(data))
             await redis_client.ltrim("latest_messages", 0, 9)
 
-            print("redis pushed and trimmed")
+            print("Redis pushed and trimmed")
 
             pusher_client.trigger("my-channel", "my-event", {"message": "DATA CHANGED!"})
             print("Message published successfully")
