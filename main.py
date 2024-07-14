@@ -121,8 +121,7 @@ async def handler(event):
                             msg_data["rugcheck"] = new_rugcheck_data  # Update rugcheck data
                             await redis_client.lset("latest_messages", idx,
                                                     json.dumps(msg_data))  # Update the message in Redis
-                            pusher_client.trigger("my-channel", "my-event", {"message": json.dumps(msg_data)})
-                            # await send_message_to_discord(ticker + ": " + str(new_score))  # DELETE LATER!
+                            pusher_client.trigger("my-channel", "my-event", {"message": "NEW DATA CHANGED!"})
                             break
 
             await asyncio.create_task(run_analysis())
