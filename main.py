@@ -47,7 +47,11 @@ def run_schedule():
 
 def extract_image_reference(message):
     if isinstance(message.media, MessageMediaPhoto):
-        return message.media.photo.sizes[-1].location
+        photo = message.media.photo
+        file_id = photo.id
+        access_hash = photo.access_hash
+        # Construct the URL using Telegram's CDN
+        return f"https://cdn4.telegram-cdn.org/file/{file_id}_{access_hash}.jpg"
     return None
 
 
@@ -83,7 +87,7 @@ async def handler(event):
             score = await fetch_tweets_and_analyze(ticker)
 
             # Extract image reference
-            image_reference = extract_image_reference(message)
+            image_url = extract_image_reference(message)
 
             # Generate a unique ID for the message
             message_id = str(uuid.uuid4())
@@ -94,7 +98,7 @@ async def handler(event):
                 "date": message.date.isoformat(),
                 "scores": [score, None, None],  # Initialize with the first score and placeholders
                 "rugcheck": rugcheck_data,  # Possibly None
-                "image_reference": image_reference  # Image reference
+                "image_url": image_url  # Add image URL
             }
             print(data)
 
