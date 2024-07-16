@@ -7,6 +7,7 @@ load_dotenv()
 
 DISCORD_CHANNEL_ID = int(os.environ.get('DISCORD_CHANNEL_ID'))
 DISCORD_CHANNEL_ID_2 = int(os.environ.get('DISCORD_CHANNEL_ID_2'))
+DISCORD_CHANNEL_ID_3 = int(os.environ.get('DISCORD_CHANNEL_ID_3'))
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 
 # Discord bot setup
@@ -60,6 +61,15 @@ async def send_message_to_discord(message):
 async def send_log_to_discord(message):
     await dc_client.wait_until_ready()  # Ensure the client is ready before trying to send a message
     channel = dc_client.get_channel(DISCORD_CHANNEL_ID_2)
+    if channel:
+        await channel.send(message)
+    else:
+        print("Channel not found")
+
+
+async def send_error_log_to_discord(message):
+    await dc_client.wait_until_ready()  # Ensure the client is ready before trying to send a message
+    channel = dc_client.get_channel(DISCORD_CHANNEL_ID_3)
     if channel:
         await channel.send(message)
     else:

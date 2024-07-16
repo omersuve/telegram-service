@@ -7,7 +7,8 @@ import pusher
 import redis.asyncio as redis
 from dotenv import load_dotenv
 from telethon import TelegramClient, events
-from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord, send_log_to_discord
+from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord, send_log_to_discord, \
+    send_error_log_to_discord
 from trending_sentiment import fetch_tweets_and_analyze
 from rugcheck import get_rugcheck_report
 import schedule
@@ -78,7 +79,7 @@ async def handler(event):
             # Check if result contains an error
             if "error" in result:
                 print(f"Error in fetch_tweets_and_analyze: {result['error']}")
-                await send_log_to_discord(result['error'])  # Send error to Discord
+                await send_error_log_to_discord(result['error'])  # Send error to Discord
                 return
 
             score = result
@@ -115,7 +116,7 @@ async def handler(event):
                         # Check if new_score contains an error
                         if "error" in new_score:
                             print(f"Error in fetch_tweets_and_analyze: {new_score['error']}")
-                            await send_log_to_discord(new_score['error'])  # Send error to Discord
+                            await send_error_log_to_discord(new_score['error'])  # Send error to Discord
                             return
 
                         new_rugcheck_report = get_rugcheck_report(token_address) if token_address else None
@@ -141,7 +142,7 @@ async def handler(event):
                                 break
 
                 except Exception as exception:
-                    await send_log_to_discord(str(exception))
+                    await send_error_log_to_discord(str(exception))
 
             await asyncio.create_task(run_analysis())
 
