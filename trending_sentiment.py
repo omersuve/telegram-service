@@ -212,5 +212,6 @@ async def fetch_tweets_and_analyze(ticker: str):
 
     except Exception as err:
         print(f"Error fetching tweets for {ticker}: {err}")
+        return {"error": str(err)}
 
 # asyncio.run(fetch_tweets_and_analyze("HOTT"))
