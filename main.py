@@ -77,7 +77,7 @@ async def handler(event):
             result = await fetch_tweets_and_analyze(ticker)
 
             # Check if result contains an error
-            if "error" in result:
+            if isinstance(result, dict) and "error" in result:
                 print(f"Error in fetch_tweets_and_analyze: {result['error']}")
                 await send_error_log_to_discord(result['error'])  # Send error to Discord
                 return
@@ -113,8 +113,8 @@ async def handler(event):
                     for i in range(2):
                         await asyncio.sleep(1800)  # Wait for 0.5 hour
                         new_score = await fetch_tweets_and_analyze(ticker)
-                        # Check if new_score contains an error
-                        if "error" in new_score:
+                        # Check if result contains an error
+                        if isinstance(new_score, dict) and "error" in new_score:
                             print(f"Error in fetch_tweets_and_analyze: {new_score['error']}")
                             await send_error_log_to_discord(new_score['error'])  # Send error to Discord
                             return

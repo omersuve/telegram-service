@@ -164,7 +164,7 @@ async def fetch_tweets_and_analyze(ticker: str):
         tweet_count = 0
         for tweet in tweets:
             print(tweet.full_text)
-            if ticker not in tweet.full_text:
+            if ticker.lower() not in tweet.full_text.lower():
                 continue
             sc = calculate_score(tweet)
             print("sc", sc)
@@ -175,7 +175,7 @@ async def fetch_tweets_and_analyze(ticker: str):
         more_tweets = tweets.next()  # Retrieve more tweets
 
         for tweet in more_tweets:
-            if ticker not in tweet.full_text:
+            if ticker.lower() not in tweet.full_text.lower():
                 continue
             sc = calculate_score(tweet)
             print("sc", sc)
@@ -186,7 +186,7 @@ async def fetch_tweets_and_analyze(ticker: str):
         much_more_tweets = more_tweets.next()  # Retrieve more tweets
 
         for tweet in much_more_tweets:
-            if ticker not in tweet.full_text:
+            if ticker.lower() not in tweet.full_text.lower():
                 continue
             sc = calculate_score(tweet)
             print("sc", sc)
