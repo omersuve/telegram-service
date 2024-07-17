@@ -156,9 +156,9 @@ async def fetch_tweets_and_analyze(ticker: str):
     formatted_yesterday = yesterday.strftime("%Y-%m-%d")
 
     try:
-        print('{} since:{} min_retweets:4  min_faves:10'.format(search_query, formatted_yesterday))
+        print('{} since:{} min_retweets:2  min_faves:5'.format(search_query, formatted_yesterday))
         tweets = client.search_tweet(
-            '{} since:{} min_retweets:5  min_faves:10'.format(search_query, formatted_yesterday), 'Top', 10)
+            '{} since:{} min_retweets:2  min_faves:5'.format(search_query, formatted_yesterday), 'Top', 10)
 
         total_score = 0
         tweet_count = 0
