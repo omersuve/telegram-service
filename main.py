@@ -100,6 +100,7 @@ async def handler(event):
             await redis_client.ltrim("latest_messages", 0, 9)
 
             print("Redis pushed, trimmed!")
+            await asyncio.sleep(3)  # Wait for 3 seconds
 
             pusher_client.trigger("my-channel", "my-event", {"message": "DATA CHANGED!"})
             print("Message published successfully")
@@ -136,6 +137,9 @@ async def handler(event):
                                 msg_data["rugcheck"] = new_rugcheck_data  # Update rugcheck data
                                 await redis_client.lset("latest_messages", idx,
                                                         json.dumps(msg_data))  # Update the message in Redis
+
+                                await asyncio.sleep(3)  # Wait for 3 seconds
+
                                 pusher_client.trigger("my-channel", "my-event", {"message": "NEW DATA CHANGED!"})
                                 # Send log to Discord
                                 await send_log_to_discord(json.dumps(msg_data))
