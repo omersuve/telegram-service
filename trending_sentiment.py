@@ -140,7 +140,7 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
     return int(min(round(scaled_score), max_target))
 
 
-async def fetch_tweets_and_analyze(ticker: str):
+async def fetch_tweets_and_analyze(ticker: str, retries=1):
     global current_account_index
     account = accounts[current_account_index]
 
@@ -156,9 +156,9 @@ async def fetch_tweets_and_analyze(ticker: str):
     formatted_yesterday = yesterday.strftime("%Y-%m-%d")
 
     try:
-        print('{} since:{} min_retweets:2  min_faves:5'.format(search_query, formatted_yesterday))
+        print('{} since:{} min_retweets:4  min_faves:10'.format(search_query, formatted_yesterday))
         tweets = client.search_tweet(
-            '{} since:{} min_retweets:2  min_faves:5'.format(search_query, formatted_yesterday), 'Top', 10)
+            '{} since:{} min_retweets:4  min_faves:10'.format(search_query, formatted_yesterday), 'Top', 10)
 
         total_score = 0
         tweet_count = 0
@@ -212,6 +212,13 @@ async def fetch_tweets_and_analyze(ticker: str):
 
     except Exception as err:
         print(f"Error fetching tweets for {ticker}: {err}")
+
+        # Handle authentication error by logging in and saving new cookies
+        if 'Could not authenticate you' in str(err) and retries > 0:
+            print(f"Re-logging in for {account['username']} due to authentication error.")
+            login_and_save_cookies(account)
+            return await fetch_tweets_and_analyze(ticker, retries - 1)
+
         return {"error": str(err)}
 
 # asyncio.run(fetch_tweets_and_analyze("HOTT"))
