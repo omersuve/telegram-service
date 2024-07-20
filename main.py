@@ -48,7 +48,6 @@ def run_schedule():
 @client_telegram.on(events.NewMessage(chats=chat))
 async def handler(event):
     message = event.message
-    print("message:", message)
     try:
         # Extract ticker symbol using regex
         match = re.search(r'Token: [#$](\w+)', message.text)
