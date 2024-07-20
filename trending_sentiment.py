@@ -5,7 +5,6 @@ import time
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from twikit import Client, Tweet, TooManyRequests
-
 from discord_message import send_error_log_to_discord
 
 # Load environment variables from the .env file
