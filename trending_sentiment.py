@@ -1,7 +1,5 @@
 import asyncio
 import os
-from math import ceil
-import time
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from twikit import Client, Tweet, TooManyRequests
@@ -52,18 +50,6 @@ def login_and_save_cookies(account):
     client.save_cookies(account['cookie_file'])
     print(f"Logged in and saved new cookies for {account['username']}.")
 
-
-def load_cookies(account):
-    try:
-        client.load_cookies(account['cookie_file'])
-        print(f"Cookies loaded successfully for {account['username']}.")
-    except Exception as e:
-        print(f"Failed to load cookies for {account['username']}: {e}. Logging in again.")
-        login_and_save_cookies(account)
-
-
-# Load cookies for the initial account
-# load_cookies(accounts[current_account_index])
 
 # Define thresholds
 followers_threshold = 1000
@@ -147,7 +133,8 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
     account = accounts[current_account_index]
 
     # Load cookies for the current account
-    load_cookies(account)
+    client.load_cookies(account['cookie_file'])
+    print(f"Cookies loaded successfully for {account['username']}.")
 
     search_query = f"${ticker}"
     print("search_query", search_query)
