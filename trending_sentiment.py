@@ -212,17 +212,6 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
 
         return final_score
 
-    except TooManyRequests as err:
-        if err.rate_limit_reset:
-            rate_seconds = ceil(err.rate_limit_reset - time.time())
-            print(f"Rate limit for {account['username']}. Reset after {rate_seconds}. Skipping to next account.")
-            await send_error_log_to_discord(
-                f"Rate limit for {account['username']}. Reset after {rate_seconds}. Skipping to next account.")
-            await asyncio.sleep(rate_seconds / 3)
-            print(f"Waited {rate_seconds / 3} seconds!")
-        current_account_index = (current_account_index + 1) % len(accounts)
-        return await fetch_tweets_and_analyze(ticker)
-
     except Exception as err:
         print(f"Error fetching tweets for {ticker}: {err}")
 
@@ -232,7 +221,10 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
             await send_error_log_to_discord(f"Re-logging in for {account['username']} due to authentication error.")
             login_and_save_cookies(account)
             return await fetch_tweets_and_analyze(ticker, retries - 1)
-
-        return {"error": str(err)}
+        else:
+            print(str(err))
+            await send_error_log_to_discord(str(err))
+        current_account_index = (current_account_index + 1) % len(accounts)
+        return await fetch_tweets_and_analyze(ticker)
 
 # asyncio.run(fetch_tweets_and_analyze("BTC"))
