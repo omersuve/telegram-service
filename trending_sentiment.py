@@ -1,5 +1,6 @@
 import asyncio
 import os
+from os.path import exists
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from twikit import Client, Tweet, TooManyRequests
@@ -57,6 +58,15 @@ def login_and_save_cookies(account):
     print(f"Logged in and saved new cookies for {account['username']}.")
 
 
+def load_cookies(account):
+    if not exists(account['cookie_file']):
+        print(f"Cookie file {account['cookie_file']} does not exist. Logging in and creating the file.")
+        login_and_save_cookies(account)
+    else:
+        client.load_cookies(account['cookie_file'])
+        print(f"Cookies loaded successfully for {account['username']}.")
+
+
 # Define thresholds
 followers_threshold = 1000
 favourites_threshold = 10000
@@ -97,8 +107,6 @@ max_total_score = (
                           max_verified_score
                   ) * max_tweet_count_weight
 
-print("max_total_score", max_total_score)
-
 
 def calculate_score(tweet: Tweet):
     if tweet.user.followers_count < followers_threshold or tweet.user.favourites_count < favourites_threshold:
@@ -110,13 +118,6 @@ def calculate_score(tweet: Tweet):
     followers_score = tweet.user.followers_count * weight_followers
     favourites_score = tweet.user.favourites_count * weight_favourites
     verified_score = tweet.user.is_blue_verified * weight_verified
-
-    print("favorite_count:", tweet.favorite_count, "-> favorite_score:", favorite_score)
-    print("retweet_count:", tweet.retweet_count, "-> retweet_score:", retweet_score)
-    print("reply_count:", tweet.reply_count, "-> reply_score:", reply_score)
-    print("followers_count:", tweet.user.followers_count, "-> followers_score:", followers_score)
-    print("favourites_count:", tweet.user.favourites_count, "-> favourites_score:", favourites_score)
-    print("is_blue_verified:", tweet.user.is_blue_verified, "-> verified_score:", verified_score)
 
     return (
             favorite_score +
@@ -139,8 +140,7 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
     account = accounts[current_account_index]
 
     # Load cookies for the current account
-    client.load_cookies(account['cookie_file'])
-    print(f"Cookies loaded successfully for {account['username']}.")
+    load_cookies(account)
 
     search_query = f"${ticker}"
     print("search_query", search_query)
@@ -158,12 +158,9 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
         total_score = 0
         tweet_count = 0
         for tweet in tweets:
-            print(tweet.full_text)
             if ticker.lower() not in tweet.full_text.lower():
                 continue
             sc = calculate_score(tweet)
-            print("sc", sc)
-            print("-----------------")
             total_score += sc
             tweet_count += 1
 
@@ -173,8 +170,6 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
             if ticker.lower() not in tweet.full_text.lower():
                 continue
             sc = calculate_score(tweet)
-            print("sc", sc)
-            print("-----------------")
             total_score += sc
             tweet_count += 1
 
@@ -184,8 +179,6 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
             if ticker.lower() not in tweet.full_text.lower():
                 continue
             sc = calculate_score(tweet)
-            print("sc", sc)
-            print("-----------------")
             total_score += sc
             tweet_count += 1
 
