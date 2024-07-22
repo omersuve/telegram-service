@@ -3,7 +3,7 @@ import os
 from os.path import exists
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-from twikit import Client, Tweet, TooManyRequests
+from twikit import Client, Tweet
 from discord_message import send_error_log_to_discord
 
 # Load environment variables from the .env file
@@ -40,6 +40,12 @@ accounts = [
         'email': os.environ.get('TW_MAIL_5'),
         'password': os.environ.get('TW_PASS_5'),
         'cookie_file': 'cookies5.json'
+    },
+    {
+        'username': os.environ.get('TW_USERNAME_6'),
+        'email': os.environ.get('TW_MAIL_6'),
+        'password': os.environ.get('TW_PASS_6'),
+        'cookie_file': 'cookies6.json'
     }
 ]
 
