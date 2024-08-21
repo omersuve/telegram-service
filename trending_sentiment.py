@@ -36,12 +36,6 @@ accounts = [
         'cookie_file': 'cookies4.json'
     },
     {
-        'username': os.environ.get('TW_USERNAME_5'),
-        'email': os.environ.get('TW_MAIL_5'),
-        'password': os.environ.get('TW_PASS_5'),
-        'cookie_file': 'cookies5.json'
-    },
-    {
         'username': os.environ.get('TW_USERNAME_6'),
         'email': os.environ.get('TW_MAIL_6'),
         'password': os.environ.get('TW_PASS_6'),
@@ -54,8 +48,8 @@ current_account_index = 0
 client = Client('en-US')
 
 
-def login_and_save_cookies(account):
-    client.login(
+async def login_and_save_cookies(account):
+    await client.login(
         auth_info_1=account['username'],
         auth_info_2=account['email'],
         password=account['password']
@@ -64,10 +58,10 @@ def login_and_save_cookies(account):
     print(f"Logged in and saved new cookies for {account['username']}.")
 
 
-def load_cookies(account):
+async def load_cookies(account):
     if not exists(account['cookie_file']):
         print(f"Cookie file {account['cookie_file']} does not exist. Logging in and creating the file.")
-        login_and_save_cookies(account)
+        await login_and_save_cookies(account)
     else:
         client.load_cookies(account['cookie_file'])
         print(f"Cookies loaded successfully for {account['username']}.")
@@ -146,7 +140,7 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
     account = accounts[current_account_index]
 
     # Load cookies for the current account
-    load_cookies(account)
+    await load_cookies(account)
 
     search_query = f"${ticker}"
     print("search_query", search_query)
@@ -158,7 +152,7 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
 
     try:
         print('{} since:{} min_retweets:2  min_faves:5'.format(search_query, formatted_yesterday))
-        tweets = client.search_tweet(
+        tweets = await client.search_tweet(
             '{} since:{} min_retweets:2  min_faves:5'.format(search_query, formatted_yesterday), 'Top', 10)
 
         total_score = 0
@@ -170,7 +164,7 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
             total_score += sc
             tweet_count += 1
 
-        more_tweets = tweets.next()  # Retrieve more tweets
+        more_tweets = await tweets.next()  # Retrieve more tweets
 
         for tweet in more_tweets:
             if ticker.lower() not in tweet.full_text.lower():
@@ -179,7 +173,7 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
             total_score += sc
             tweet_count += 1
 
-        much_more_tweets = more_tweets.next()  # Retrieve more tweets
+        much_more_tweets = await more_tweets.next()  # Retrieve more tweets
 
         for tweet in much_more_tweets:
             if ticker.lower() not in tweet.full_text.lower():
@@ -211,7 +205,7 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
         if 'Could not authenticate you' in str(err) and retries > 0:
             print(f"Re-logging in for {account['username']} due to authentication error.")
             await send_error_log_to_discord(f"Re-logging in for {account['username']} due to authentication error.")
-            login_and_save_cookies(account)
+            await login_and_save_cookies(account)
             return await fetch_tweets_and_analyze(ticker, retries - 1)
         else:
             print(str(err))
