@@ -1,10 +1,1 @@
-{
-  "guest_id_marketing": "v1%v1%3A172428333813594120",
-  "guest_id_ads": "v1%v1%3A172428333813594120",
-  "personalization_id": "\"v1_2j7qMXLIZqHKhbmb4hc8rA==\"",
-  "guest_id": "v1%3A172428333813594120",
-  "kdt": "n6botqcNz1Z7wqaNEPgNrelMbe69iHfAitYeyDQx",
-  "twid": "u%3D1811690067787939841",
-  "ct0": "0cbb7e1f4071b55b3d16057d26653950567892a06ef61f035f98f85a83f6e84e08982f9ef6b3b84bb80331de5dda366a9722ea47d35a8fe718583f8551a5fc710b9f5d4c07aa9196d3a08cd571451f61",
-  "auth_token": "071b36cfc3f614fec5d676bb84cc5de39368af38"
-}
+{"guest_id_marketing": "v1%3A172569821284306363", "guest_id_ads": "v1%3A172569821284306363", "personalization_id": "\"v1_/etiEUFkReHcjH1bmpA1jg==\"", "guest_id": "v1%3A172569821284306363", "att": "1-2bUxjG2LqQOkkAarXpeIoR4PfRpeoWeoxmAxsr5o", "_twitter_sess": "BAh7CSIKZmxhc2hJQzonQWN0aW9uQ29udHJvbGxlcjo6Rmxhc2g6OkZsYXNo%250ASGFzaHsABjoKQHVzZWR7ADoPY3JlYXRlZF9hdGwrCNwGocuRAToMY3NyZl9p%250AZCIlODY5ZGRjOTc1ZjEzZTMwOGI3OWNkZTI1YTZjOTIzZmQ6B2lkIiVhYjkw%250AOWMzOWFjMGQ1Nzg2NzZkNDRjMTQ5ZDJjZjM1OQ%253D%253D--6c077786947f57918b79a6b4716affef3ac589f9", "kdt": "4nvbquvoJ9nA8foKXS0Z34fZHZbzGAYNteAx2Wjz", "twid": "\"u=1811690067787939841\"", "ct0": "6906795bea678005ac7d3090362e83e6", "auth_token": "27c42706f7515e5465017e8bd8e48b43cd6278a9"}

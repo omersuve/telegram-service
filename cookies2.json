@@ -1,14 +1,1 @@
-{
-  "auth_multi": "1814971345710542848:cb3226d3a1c54cdac259132b70632357791df1bd|2905412645:fff0580f859b2931fa37095a057d34b95f1c9f92|1811690067787939841:071b36cfc3f614fec5d676bb84cc5de39368af38|1815438185939312640:fa7535471273c1a318cdd9943336c3533aecd154",
-  "auth_token": "5dda0af6680233258e52e2e50124ccad0d7dbb40",
-  "ct0": "d2a3e21149a186c75ac60c10f70163f2a37d1dbd72ac3be0ce45714a1a5a03af18e7f8fd7a527d3217c5fbcb2ff6794681c6c142b6accb53d845dc1bd86d036f7c5a5df7af691562b5d618a7d14c784f",
-  "dnt": "1",
-  "guest_id": "v1:172428414108284582",
-  "guest_id_ads": "v1:172428414108284582",
-  "guest_id_marketing": "v1:172428414108284582",
-  "kdt": "n6botqcNz1Z7wqaNEPgNrelMbe69iHfAitYeyDQx",
-  "lang": "en",
-  "night_mode": "2",
-  "personalization_id": "\"v1_4EqGdrnEjnLE/nycWmU98Q==\"",
-  "twid": "u=1815441364525465600"
-}
+{"guest_id_marketing": "v1%3A172569815011961506", "guest_id_ads": "v1%3A172569815011961506", "personalization_id": "\"v1_+YsDOSPqoMstCS70UszAvQ==\"", "guest_id": "v1%3A172569815011961506", "att": "1-1WR9FqzpxepX0cJega1Xzw5rZGyj1XAUuUFdIG5t", "_twitter_sess": "BAh7CSIKZmxhc2hJQzonQWN0aW9uQ29udHJvbGxlcjo6Rmxhc2g6OkZsYXNo%250ASGFzaHsABjoKQHVzZWR7ADoPY3JlYXRlZF9hdGwrCBkSoMuRAToMY3NyZl9p%250AZCIlMDgwYmVkYTA4MGFkNzI3YjE0MjI1NzczM2ViM2JlYzQ6B2lkIiU3MzQx%250AMWE3NWViYjJiZjU2Njg1Y2IwYmQ4ZDAyZDJlNg%253D%253D--dd2f7b989d7bf73ebac992a2315b16270b4f6060", "kdt": "HLQ4bxygPjk2J3Z7pMgTxtXwCRmDUHXAvl0BNOBY", "twid": "\"u=1815441364525465600\"", "ct0": "93a1b89500cc00e5322589425cbbdc33", "auth_token": "0962364807e1ae6fbdcbc9056c36315a16513e8c"}
