@@ -36,6 +36,12 @@ accounts = [
         'cookie_file': 'cookies4.json'
     },
     {
+        'username': os.environ.get('TW_USERNAME_5'),
+        'email': os.environ.get('TW_MAIL_5'),
+        'password': os.environ.get('TW_PASS_5'),
+        'cookie_file': 'cookies5.json'
+    },
+    {
         'username': os.environ.get('TW_USERNAME_6'),
         'email': os.environ.get('TW_MAIL_6'),
         'password': os.environ.get('TW_PASS_6'),
