@@ -59,6 +59,9 @@ async def handler(event):
             address_match = re.search(r'dexscreener.com/solana/([a-zA-Z0-9]+)', message.text)
             token_address = address_match.group(1) if address_match else None
 
+            if not token_address:
+                return
+
             rugcheck_data = None
 
             if token_address:
