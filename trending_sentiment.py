@@ -156,7 +156,7 @@ async def post_twitter(message_json):
     # Perform the asynchronous POST request using aiohttp
     async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
         async with session.post(
-                url="http://blinks-python.railway.internal/post_tweet",
+                url="http://blinks-python.railway.internal:5001/post_tweet",
                 json={'text': formatted_message}
         ) as response:
             res = await response.json()
