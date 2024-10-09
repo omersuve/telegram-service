@@ -1,4 +1,5 @@
 import asyncio
+import aiohttp
 import os
 from os.path import exists
 from dotenv import load_dotenv
@@ -133,6 +134,33 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
     min_target, max_target = target_range
     scaled_score = ((score / max_score) * (max_target - min_target)) + min_target
     return int(min(round(scaled_score), max_target))
+
+
+async def post_twitter(message_json):
+    text = message_json['text']
+    date = message_json['date']
+
+    # Extract the necessary details from the text
+    lines = [line for line in text.split('\n') if line]
+
+    header = lines[0].replace('🔥 ', '')
+    token = lines[1].split(': ')[1]
+
+    formatted_message = f"""
+    {header}
+
+    **Token:** {token}
+    **Date:** {date}
+    """
+
+    # Perform the asynchronous POST request using aiohttp
+    async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
+        async with session.post(
+                url="http://blinks-python.railway.internal/post_tweet",
+                json={'text': formatted_message}
+        ) as response:
+            res = await response.json()
+            print(res)
 
 
 async def fetch_tweets_and_analyze(ticker: str, retries=1):

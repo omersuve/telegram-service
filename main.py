@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from telethon import TelegramClient, events
 from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord, send_log_to_discord, \
     send_error_log_to_discord
-from trending_sentiment import fetch_tweets_and_analyze
+from trending_sentiment import fetch_tweets_and_analyze, post_twitter
 from rugcheck import get_rugcheck_report
 import schedule
 import time
@@ -60,6 +60,7 @@ async def handler(event):
             token_address = address_match.group(1) if address_match else None
 
             if not token_address:
+                print("Token address not found in the message text. Exiting handler.")
                 return
 
             rugcheck_data = None
@@ -102,6 +103,9 @@ async def handler(event):
 
             # Send message to Discord
             await send_message_to_discord(data)
+
+            # Send post to Twitter
+            await post_twitter(data)
 
             # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
             async def run_analysis():
