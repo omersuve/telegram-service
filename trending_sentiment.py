@@ -2,6 +2,8 @@ import asyncio
 import aiohttp
 import os
 from os.path import exists
+
+import requests
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from twikit import Client, Tweet
@@ -153,14 +155,18 @@ async def post_twitter(message_json):
     **Date:** {date}
     """
 
-    # Perform the asynchronous POST request using aiohttp
-    async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
-        async with session.post(
-                url="http://blinks-python.railway.internal:5001/post_tweet",
-                json={'text': formatted_message}
-        ) as response:
-            res = await response.json()
-            print(res)
+    # Perform the synchronous POST request using requests
+    try:
+        response = requests.post(
+            url="http://blinks-python.railway.internal:5001/post_tweet",
+            json={'text': formatted_message},
+            timeout=15  # Set a timeout for the request
+        )
+        # Print the response from the server
+        print(response.json())
+    except requests.exceptions.RequestException as e:
+        # Handle any exceptions (e.g., connection errors, timeouts)
+        print(f"Failed to post the message to Twitter: {e}")
 
 
 async def fetch_tweets_and_analyze(ticker: str, retries=1):
