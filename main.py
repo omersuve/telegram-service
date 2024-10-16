@@ -83,6 +83,25 @@ async def handler(event):
             # Generate a unique ID for the message
             message_id = str(uuid.uuid4())
 
+            # Format the Blink URL with the token address
+            blink_url = f"https://dial.to/?action=solana-action%3Ahttps%3A%2F%2Factions.shotbots.app%2Fapi%2Fswap%3FtokenAddress%3D{token_address}&cluster=mainnet"
+
+            # Prepare the tweet content with Blink URL
+            tweet_content = f"""
+                        🔥 Trending Token: {ticker}
+
+                        **Token Address:** {token_address}
+                        **RugCheck:** Risks: {rugcheck_data.get('risks', 'N/A') if rugcheck_data else 'N/A'}
+                        **Liquidity:** {rugcheck_data.get('totalMarketLiquidity', 'N/A') if rugcheck_data else 'N/A'}
+                        **Sentiment Score:** {score}
+
+                        Check it out and swap:
+                        {blink_url}
+                        """
+
+            # Send the formatted tweet to Twitter
+            await post_twitter({'text': tweet_content})
+
             data = {
                 "id": message_id,
                 "text": message.text,
@@ -103,9 +122,6 @@ async def handler(event):
 
             # Send message to Discord
             await send_message_to_discord(data)
-
-            # Send post to Twitter
-            await post_twitter(data)
 
             # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
             async def run_analysis():

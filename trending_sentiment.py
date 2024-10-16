@@ -140,27 +140,12 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
 
 async def post_twitter(message_json):
     text = message_json['text']
-    date = message_json['date']
-
-    # Extract the necessary details from the text
-    lines = [line for line in text.split('\n') if line]
-
-    header = lines[0].replace('🔥 ', '')
-    token = lines[1].split(': ')[1]
-
-    formatted_message = f"""
-    {header}
-
-    **Token:** {token}
-    **Date:** {date}
-    """
-
     # Perform the synchronous POST request using requests
     try:
         response = requests.post(
             url="http://blinks-python.railway.internal:5001/post_tweet",
-            json={'text': formatted_message},
-            timeout=15  # Set a timeout for the request
+            json={'text': text},
+            timeout=20  # Set a timeout for the request
         )
         # Print the response from the server
         print(response.json())
