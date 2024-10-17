@@ -185,7 +185,7 @@ async def fetch_tweets_and_analyze(ticker: str, attempts=0):
         current_account_index = (current_account_index + 1) % len(accounts)  # Move to next account
         return await fetch_tweets_and_analyze(ticker, attempts + 1)
 
-    search_query = f"${ticker}"
+    search_query = f"{ticker}"
     now = datetime.now()
     yesterday = now - timedelta(days=1)
     formatted_yesterday = yesterday.strftime("%Y-%m-%d")

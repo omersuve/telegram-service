@@ -50,7 +50,7 @@ async def handler(event):
     message = event.message
     try:
         # Extract ticker symbol using regex
-        match = re.search(r'Token: [#$](\w+)', message.text)
+        match = re.search(r'Token: ([#$]\w+)', message.text)
         if match:
             ticker = match.group(1)
             print(f"Extracted ticker: {ticker}")
@@ -88,13 +88,13 @@ async def handler(event):
 
             # Prepare the tweet content with Blink URL
             tweet_content = f"""
-                        🎯 Trending: {ticker}
+            🎯 Trending: {ticker}
 
-                        CA: {token_address}
-                        Sentiment Score: {score}
+            📄 CA: {token_address}
+            🥅 Sentiment Score: {score}
 
-                        {blink_url}
-                        """
+            {blink_url}
+            """
 
             # Send the formatted tweet to Twitter
             await post_twitter({'text': tweet_content})
