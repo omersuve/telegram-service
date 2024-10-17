@@ -88,14 +88,11 @@ async def handler(event):
 
             # Prepare the tweet content with Blink URL
             tweet_content = f"""
-                        🔥 Trending Token: {ticker}
+                        🎯 Trending: {ticker}
 
-                        **Token Address:** {token_address}
-                        **RugCheck:** Risks: {rugcheck_data.get('risks', 'N/A') if rugcheck_data else 'N/A'}
-                        **Liquidity:** {rugcheck_data.get('totalMarketLiquidity', 'N/A') if rugcheck_data else 'N/A'}
-                        **Sentiment Score:** {score}
+                        CA: {token_address}
+                        Sentiment Score: {score}
 
-                        Check it out and swap:
                         {blink_url}
                         """
 
