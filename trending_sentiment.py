@@ -1,5 +1,4 @@
 import asyncio
-import aiohttp
 import os
 from os.path import exists
 
@@ -46,28 +45,45 @@ accounts = [
     }
 ]
 
+max_account_attempts = len(accounts)  # Track the number of total accounts tried
+
 current_account_index = 0
 
 client = Client('en-US')
 
 
 async def login_and_save_cookies(account):
-    await client.login(
-        auth_info_1=account['username'],
-        auth_info_2=account['email'],
-        password=account['password']
-    )
-    client.save_cookies(account['cookie_file'])
-    print(f"Logged in and saved new cookies for {account['username']}.")
+    """Login and save cookies for the account."""
+    try:
+        await client.login(
+            auth_info_1=account['username'],
+            auth_info_2=account['email'],
+            password=account['password']
+        )
+        client.save_cookies(account['cookie_file'])
+        print(f"Logged in and saved new cookies for {account['username']}.")
+    except Exception as e:
+        print(f"Failed to log in for {account['username']}: {str(e)}")
+        await send_error_log_to_discord(f"Failed to log in for {account['username']}: {str(e)}")
+        return False
+    return True
 
 
 async def load_cookies(account):
+    """Load cookies, or login if they don't exist."""
     if not exists(account['cookie_file']):
-        print(f"Cookie file {account['cookie_file']} does not exist. Logging in and creating the file.")
-        await login_and_save_cookies(account)
+        print(f"Cookie file {account['cookie_file']} does not exist. Attempting login.")
+        success = await login_and_save_cookies(account)
+        if not success:
+            return False  # Return False if login fails
     else:
-        client.load_cookies(account['cookie_file'])
-        print(f"Cookies loaded successfully for {account['username']}.")
+        try:
+            client.load_cookies(account['cookie_file'])
+            print(f"Cookies loaded successfully for {account['username']}.")
+        except Exception as e:
+            print(f"Failed to load cookies for {account['username']}: {str(e)}")
+            return False  # Return False if loading cookies fails
+    return True
 
 
 # Define thresholds
@@ -154,19 +170,24 @@ async def post_twitter(message_json):
         print(f"Failed to post the message to Twitter: {e}")
 
 
-async def fetch_tweets_and_analyze(ticker: str, retries=1):
+async def fetch_tweets_and_analyze(ticker: str, attempts=0):
     global current_account_index
     account = accounts[current_account_index]
 
-    # Load cookies for the current account
-    await load_cookies(account)
+    if attempts >= max_account_attempts:
+        print(f"All accounts have been attempted. Stopping after {attempts} attempts.")
+        return None  # You can return an error or log that all accounts failed.
+
+    # Try to load cookies for the current account
+    success = await load_cookies(account)
+    if not success:
+        print(f"Moving to next account due to cookie issue for {account['username']}.")
+        current_account_index = (current_account_index + 1) % len(accounts)  # Move to next account
+        return await fetch_tweets_and_analyze(ticker, attempts + 1)
 
     search_query = f"${ticker}"
-    print("search_query", search_query)
-
     now = datetime.now()
     yesterday = now - timedelta(days=1)
-
     formatted_yesterday = yesterday.strftime("%Y-%m-%d")
 
     try:
@@ -176,6 +197,7 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
 
         total_score = 0
         tweet_count = 0
+
         for tweet in tweets:
             if ticker.lower() not in tweet.full_text.lower():
                 continue
@@ -219,17 +241,26 @@ async def fetch_tweets_and_analyze(ticker: str, retries=1):
 
     except Exception as err:
         print(f"Error fetching tweets for {ticker}: {err}")
-
-        # Handle authentication error by logging in and saving new cookies
-        if 'Could not authenticate you' in str(err) and retries > 0:
+        # Handle "Could not authenticate you" error by re-logging in
+        if 'Could not authenticate you' in str(err):
             print(f"Re-logging in for {account['username']} due to authentication error.")
             await send_error_log_to_discord(f"Re-logging in for {account['username']} due to authentication error.")
-            await login_and_save_cookies(account)
-            return await fetch_tweets_and_analyze(ticker, retries - 1)
+            try:
+                await login_and_save_cookies(account)  # Attempt to log in again
+                return await fetch_tweets_and_analyze(ticker, attempts)  # Retry after login
+            except Exception as login_err:
+                # Handle login errors (e.g., "LoginFlow" error) and move to the next account
+                if 'LoginFlow' in str(login_err):
+                    print(f"LoginFlow error encountered for {account['username']}. Switching to next account.")
+                    await send_error_log_to_discord(
+                        f"LoginFlow error for {account['username']}. Moving to next account.")
+                    current_account_index = (current_account_index + 1) % len(accounts)  # Move to next account
+                    return await fetch_tweets_and_analyze(ticker, attempts + 1)
         else:
-            print(str(err))
-            await send_error_log_to_discord(str(err))
-        current_account_index = (current_account_index + 1) % len(accounts)
-        return await fetch_tweets_and_analyze(ticker)
+            print(f"Error: {str(err)}")
+            await send_error_log_to_discord(f"Error fetching tweets for {ticker}: {str(err)}")
+            # Move to next account
+            current_account_index = (current_account_index + 1) % len(accounts)
+            return await fetch_tweets_and_analyze(ticker, attempts + 1)
 
 # asyncio.run(fetch_tweets_and_analyze("BTC"))
