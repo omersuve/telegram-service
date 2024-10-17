@@ -90,7 +90,7 @@ async def handler(event):
             tweet_content = (
                 f"🎯 Trending: {ticker}\n\n"
                 f"📄 CA: {token_address}\n\n"
-                f"🥅 Sentiment Score: {score}\n\n"
+                f"🥅 Sentiment Score: {score}/100\n\n"
                 f"{blink_url}"
             )
 
