@@ -77,6 +77,10 @@ async def handler(event):
                         "totalMarketLiquidity": rugcheck_report.get("totalMarketLiquidity")
                     }
 
+            # Extract Telegram handle or URL
+            tg_match = re.search(r'Telegram: (@[a-zA-Z0-9_]+|https://t\.me/[a-zA-Z0-9_]+)', message.text)
+            telegram_url = tg_match.group(1) if tg_match else "N/A"
+
             # Fetch Twitter sentiment score
             score = await fetch_tweets_and_analyze(ticker)
 
@@ -86,10 +90,15 @@ async def handler(event):
             # Format the Blink URL with the token address
             blink_url = f"https://dial.to/?action=solana-action%3Ahttps%3A%2F%2Factions.shotbots.app%2Fapi%2Fswap%3FtokenAddress%3D{token_address}&cluster=mainnet"
 
+            # Generate the DexScreener URL
+            dexscreener_url = f"https://dexscreener.com/solana/{token_address}"
+
             # Prepare the tweet content with Blink URL
             tweet_content = (
                 f"🎯 Trending: {ticker}\n\n"
                 f"📄 CA: {token_address}\n\n"
+                f"📊 Chart: {dexscreener_url}\n\n"
+                f"💬 TG: {telegram_url}\n\n"
                 f"🥅 Sentiment Score: {score}/100\n\n"
                 f"{blink_url}"
             )
