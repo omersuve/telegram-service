@@ -87,14 +87,12 @@ async def handler(event):
             blink_url = f"https://dial.to/?action=solana-action%3Ahttps%3A%2F%2Factions.shotbots.app%2Fapi%2Fswap%3FtokenAddress%3D{token_address}&cluster=mainnet"
 
             # Prepare the tweet content with Blink URL
-            tweet_content = f"""
-            🎯 Trending: {ticker}
-
-            📄 CA: {token_address}
-            🥅 Sentiment Score: {score}
-
-            {blink_url}
-            """
+            tweet_content = (
+                f"🎯 Trending: {ticker}\n\n"
+                f"📄 CA: {token_address}\n\n"
+                f"🥅 Sentiment Score: {score}\n\n"
+                f"{blink_url}"
+            )
 
             # Send the formatted tweet to Twitter
             await post_twitter({'text': tweet_content})
