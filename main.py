@@ -49,6 +49,10 @@ def run_schedule():
 async def handler(event):
     message = event.message
     try:
+        # Check if the message indicates a "Golden Ticker" unlock event and skip it
+        if "Golden Ticker" in message.text:
+            print("Skipping 'Golden Ticker' unlock event.")
+            return
         # Extract ticker symbol using regex
         match = re.search(r'Token: ([#$]\w+)', message.text)
         if match:
