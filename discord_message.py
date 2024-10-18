@@ -30,11 +30,22 @@ def prepare_message(message_json):
     # Extract the necessary details from the text
     lines = [line for line in text.split('\n') if line]
 
-    header = "🎯 " + lines[0].replace('🔥 ', '').replace('** has just entered Dexscreener hot pairs**',
-                                                       '**') + " 🍾"
-    token = lines[1].split(': ')[1]
-    telegram = lines[2].split(': ')[1]
-    dexscreener = lines[3].split(': ')[1]
+    # Default values
+    token = 'Unknown'
+    telegram = 'Not Provided'
+    dexscreener = 'Unknown'
+
+    # Parse header
+    header = "🎯 " + lines[0].replace('🔥 ', '').replace('** has just entered Dexscreener hot pairs**', '**') + " 🍾"
+
+    # Explicitly look for each keyword to find the correct data
+    for line in lines:
+        if line.startswith("Token:"):
+            token = line.split(": ")[1]
+        elif line.startswith("Telegram:"):
+            telegram = line.split(": ")[1]
+        elif line.startswith("Dexscreener:"):
+            dexscreener = line.split(": ")[1]
 
     formatted_message = f"""
     {header}
