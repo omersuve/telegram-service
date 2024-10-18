@@ -102,10 +102,13 @@ async def handler(event):
                 f"🎯 Trending: {ticker}\n\n"
                 f"📄 CA: {token_address}\n\n"
                 f"📊 Chart: {dexscreener_url}\n\n"
-                f"💬 TG: {telegram_url}\n\n"
+                # f"💬 TG: {telegram_url}\n\n"
                 f"🥅 Sentiment Score: {score}/100\n\n"
                 f"{blink_url}"
             )
+
+            print("tweet_content", tweet_content)
+            print("tweet_content_len", len(tweet_content))
 
             # Send the formatted tweet to Twitter
             await post_twitter({'text': tweet_content})
