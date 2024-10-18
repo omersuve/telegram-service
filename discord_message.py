@@ -30,6 +30,8 @@ def prepare_message(message_json):
     # Extract the necessary details from the text
     lines = [line for line in text.split('\n') if line]
 
+    print("lines", lines)
+
     # Default values
     token = 'Unknown'
     telegram = 'Not Provided'
