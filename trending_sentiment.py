@@ -14,6 +14,12 @@ load_dotenv()
 # Define credentials for multiple accounts
 accounts = [
     {
+        'username': os.environ.get('TW_USERNAME_6'),
+        'email': os.environ.get('TW_MAIL_6'),
+        'password': os.environ.get('TW_PASS_6'),
+        'cookie_file': 'cookies6.json'
+    },
+    {
         'username': os.environ.get('TW_USERNAME'),
         'email': os.environ.get('TW_MAIL'),
         'password': os.environ.get('TW_PASS'),
@@ -42,12 +48,6 @@ accounts = [
         'email': os.environ.get('TW_MAIL_5'),
         'password': os.environ.get('TW_PASS_5'),
         'cookie_file': 'cookies5.json'
-    },
-    {
-        'username': os.environ.get('TW_USERNAME_6'),
-        'email': os.environ.get('TW_MAIL_6'),
-        'password': os.environ.get('TW_PASS_6'),
-        'cookie_file': 'cookies6.json'
     }
 ]
 
