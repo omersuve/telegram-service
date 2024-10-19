@@ -83,7 +83,15 @@ async def handler(event):
 
             # Extract Telegram handle or URL
             tg_match = re.search(r'Telegram: (@[a-zA-Z0-9_]+|https://t\.me/[a-zA-Z0-9_]+)', message.text)
-            telegram_url = tg_match.group(1) if tg_match else "N/A"
+            if tg_match:
+                telegram_handle = tg_match.group(1)
+                # Convert to a URL if it's a handle
+                if telegram_handle.startswith('@'):
+                    telegram_url = f"https://t.me/{telegram_handle[1:]}"
+                else:
+                    telegram_url = telegram_handle
+            else:
+                telegram_url = "N/A"
 
             # Fetch Twitter sentiment score
             score = await fetch_tweets_and_analyze(ticker)

@@ -45,7 +45,12 @@ def prepare_message(message_json):
         if line.startswith("Token:"):
             token = line.split(": ")[1]
         elif line.startswith("Telegram:"):
-            telegram = line.split(": ")[1]
+            telegram_handle = line.split(": ")[1]
+            # Convert to URL if it is a handle
+            if telegram_handle.startswith('@'):
+                telegram = f"[{telegram_handle}](https://t.me/{telegram_handle[1:]})"
+            else:
+                telegram = telegram_handle  # In case it's already a full URL
         elif line.startswith("Dexscreener:"):
             dexscreener = line.split(": ")[1]
 
