@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from telethon import TelegramClient, events
 from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord, send_log_to_discord, \
     send_error_log_to_discord
-from trending_sentiment import fetch_tweets_and_analyze, post_twitter
+from trending_sentiment import fetch_tweets_and_analyze, post_twitter, generate_tweet_content
 from rugcheck import get_rugcheck_report
 import schedule
 import time
@@ -101,25 +101,23 @@ async def handler(event):
 
             # Format the Blink URL with the token address
             blink_url = f"https://dial.to/?action=solana-action%3Ahttps%3A%2F%2Factions.shotbots.app%2Fapi%2Fswap%3FtokenAddress%3D{token_address}&cluster=mainnet"
-
             # Generate the DexScreener URL
             dexscreener_url = f"https://dexscreener.com/solana/{token_address}"
 
-            # Prepare the tweet content with Blink URL
-            tweet_content = (
-                f"🎯 Trending: {ticker}\n\n"
-                f"📄 CA: {token_address}\n\n"
-                f"📊 Chart: {dexscreener_url}\n\n"
-                f"💬 TG: {telegram_url}\n\n"
-                f"🥅 Sentiment Score: {score}/100\n\n"
-                f"{blink_url}"
+            tweet_content_random = generate_tweet_content(
+                ticker=ticker,
+                token_address=token_address,
+                dexscreener_url=dexscreener_url,
+                telegram_url=telegram_url,
+                sentiment_score=score,
+                blink_url=blink_url
             )
 
-            print("tweet_content", tweet_content)
-            print("tweet_content_len", len(tweet_content))
+            print("tweet_content_random", tweet_content_random)
+            print("tweet_content_random_len", len(tweet_content_random))
 
             # Send the formatted tweet to Twitter
-            await post_twitter({'text': tweet_content})
+            await post_twitter({'text': tweet_content_random})
 
             data = {
                 "id": message_id,

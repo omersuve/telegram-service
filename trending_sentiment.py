@@ -1,7 +1,7 @@
 import asyncio
 import os
 from os.path import exists
-
+import random
 import requests
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -160,13 +160,23 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
     return int(min(round(scaled_score), max_target))
 
 
+def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url, sentiment_score, blink_url):
+    templates = [
+        f"🚀 Trending Alert: {ticker} is on the rise! 💹\n\n📄 Contract: {token_address}\n📊 Check the chart: {dexscreener_url}\n💬 Join the chat: {telegram_url}\n🧠 Sentiment: {sentiment_score}/100\n\n{blink_url}",
+        f"🌟 {ticker} just made waves! 🌊\n\n🔍 View contract: {token_address}\n📈 Chart it out: {dexscreener_url}\n👥 Telegram: {telegram_url}\n🧮 Score: {sentiment_score}/100\n\n{blink_url}",
+        f"🔥 Hot New Trend: {ticker}! 🚀\n\n📄 Contract Address: {token_address}\n📊 View chart: {dexscreener_url}\n💬 Telegram Group: {telegram_url}\n🧠 Sentiment Score: {sentiment_score}/100\n\n{blink_url}",
+        f"🚨 Attention! {ticker} is gaining traction! 📈\n\n🔗 Contract: {token_address}\n📉 See the latest chart: {dexscreener_url}\n🗨️ Connect on Telegram: {telegram_url}\n🧠 Sentiment Analysis: {sentiment_score}/100\n\n{blink_url}",
+        f"⚡️ {ticker} is trending now! ⚡️\n\n📜 Contract Info: {token_address}\n📊 Dive into the chart: {dexscreener_url}\n📣 Join the community: {telegram_url}\n📊 Sentiment: {sentiment_score}/100\n\n{blink_url}"
+    ]
+    return random.choice(templates)
+
+
 async def post_twitter(message_json):
-    text = message_json['text']
     # Perform the synchronous POST request using requests
     try:
         response = requests.post(
             url="http://blinks-python.railway.internal:5001/post_tweet",
-            json={'text': text},
+            json=message_json,
             timeout=20  # Set a timeout for the request
         )
         # Print the response from the server
