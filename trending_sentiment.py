@@ -53,6 +53,9 @@ accounts = [
 
 max_account_attempts = len(accounts)  # Track the number of total accounts tried
 
+# Variable to track the index of the last used template
+last_template_index = -1
+
 current_account_index = 0
 
 client = Client('en-US')
@@ -161,6 +164,8 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
 
 
 def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url, sentiment_score, blink_url):
+    global last_template_index
+
     templates = [
         f"🚀 Trending Alert: {ticker} is on the rise! 💹\n\n📄 Contract: {token_address}\n📊 Check the chart: {dexscreener_url}\n💬 Join the chat: {telegram_url}\n🧠 Sentiment: {sentiment_score}/100\n\n{blink_url}",
         f"🌟 {ticker} just made waves! 🌊\n\n🔍 View contract: {token_address}\n📈 Chart it out: {dexscreener_url}\n👥 Telegram: {telegram_url}\n🧮 Score: {sentiment_score}/100\n\n{blink_url}",
@@ -168,7 +173,18 @@ def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url,
         f"🚨 Attention! {ticker} is gaining traction! 📈\n\n🔗 Contract: {token_address}\n📉 See the latest chart: {dexscreener_url}\n🗨️ Connect on Telegram: {telegram_url}\n🧠 Sentiment Analysis: {sentiment_score}/100\n\n{blink_url}",
         f"⚡️ {ticker} is trending now! ⚡️\n\n📜 Contract Info: {token_address}\n📊 Dive into the chart: {dexscreener_url}\n📣 Join the community: {telegram_url}\n📊 Sentiment: {sentiment_score}/100\n\n{blink_url}"
     ]
-    return random.choice(templates)
+
+    # Generate a list of indices excluding the last used template
+    available_indices = [i for i in range(len(templates)) if i != last_template_index]
+
+    # Select a random index from the available options
+    selected_index = random.choice(available_indices)
+
+    # Update the last used template index
+    last_template_index = selected_index
+
+    # Return the selected template
+    return templates[selected_index]
 
 
 async def post_twitter(message_json):
