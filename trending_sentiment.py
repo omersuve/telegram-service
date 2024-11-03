@@ -163,15 +163,15 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
     return int(min(round(scaled_score), max_target))
 
 
-def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url, sentiment_score, blink_url):
+def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url, blink_url):
     global last_template_index
 
     templates = [
-        f"🚀 Trending Alert: {ticker} is on the rise! 💹\n\n📄 Contract: {token_address}\n📊 Check the chart: {dexscreener_url}\n💬 Join the chat: {telegram_url}\n🧠 Sentiment: {sentiment_score}/100\n\n{blink_url}",
-        f"🌟 {ticker} just made waves! 🌊\n\n🔍 View contract: {token_address}\n📈 Chart it out: {dexscreener_url}\n👥 Telegram: {telegram_url}\n🧮 Score: {sentiment_score}/100\n\n{blink_url}",
-        f"🔥 Hot New Trend: {ticker}! 🚀\n\n📄 Contract Address: {token_address}\n📊 View chart: {dexscreener_url}\n💬 Telegram Group: {telegram_url}\n🧠 Sentiment Score: {sentiment_score}/100\n\n{blink_url}",
-        f"🚨 Attention! {ticker} is gaining traction! 📈\n\n🔗 Contract: {token_address}\n📉 See the latest chart: {dexscreener_url}\n🗨️ Connect on Telegram: {telegram_url}\n🧠 Sentiment Analysis: {sentiment_score}/100\n\n{blink_url}",
-        f"⚡️ {ticker} is trending now! ⚡️\n\n📜 Contract Info: {token_address}\n📊 Dive into the chart: {dexscreener_url}\n📣 Join the community: {telegram_url}\n📊 Sentiment: {sentiment_score}/100\n\n{blink_url}"
+        f"🚀 Trending Alert: {ticker} is on the rise! 💹\n\n📄 Contract: {token_address}\n📊 Check the chart: {dexscreener_url}\n💬 Join the chat: {telegram_url}\n\n{blink_url}",
+        f"🌟 {ticker} just made waves! 🌊\n\n🔍 View contract: {token_address}\n📈 Chart it out: {dexscreener_url}\n👥 Telegram: {telegram_url}\n\n{blink_url}",
+        f"🔥 Hot New Trend: {ticker}! 🚀\n\n📄 Contract Address: {token_address}\n📊 View chart: {dexscreener_url}\n💬 Telegram Group: {telegram_url}\n\n{blink_url}",
+        f"🚨 Attention! {ticker} is gaining traction! 📈\n\n🔗 Contract: {token_address}\n📉 See the latest chart: {dexscreener_url}\n🗨️ Connect on Telegram: {telegram_url}\n\n{blink_url}",
+        f"⚡️ {ticker} is trending now! ⚡️\n\n📜 Contract Info: {token_address}\n📊 Dive into the chart: {dexscreener_url}\n📣 Join the community: {telegram_url}\n\n{blink_url}"
     ]
 
     # Generate a list of indices excluding the last used template

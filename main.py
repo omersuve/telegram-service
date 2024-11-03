@@ -109,7 +109,6 @@ async def handler(event):
                 token_address=token_address,
                 dexscreener_url=dexscreener_url,
                 telegram_url=telegram_url,
-                sentiment_score=score,
                 blink_url=blink_url
             )
 
