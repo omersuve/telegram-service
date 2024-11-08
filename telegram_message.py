@@ -24,7 +24,16 @@ def generate_telegram_content(ticker, token_address, dexscreener_url, telegram_u
         f"🚀 {ticker} is surging up the charts! 📈\n\n🔎 Contract: {token_address}\n\n📊 Check the performance: {dexscreener_url}\n\n💬 Join the conversation: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
         f"🌐 Big Moves Alert: {ticker} is catching eyes! 👀\n\n📝 Contract Details: {token_address}\n\n📈 Analyze the chart: {dexscreener_url}\n\n🔊 Chat with the community: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
         f"🔥 {ticker} is on fire! 🔥\n\n📝 Contract: {token_address}\n\n📊 Explore the chart: {dexscreener_url}\n\n👥 Join the discussion: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
-        f"⚠️ Trending Token: {ticker} is making headlines! 📈\n\n🔗 Contract Address: {token_address}\n\n📉 See the latest data: {dexscreener_url}\n\n💬 Connect on Telegram: {telegram_url}\n\n💯 Sentimental Score: {score}/100"
+        f"⚠️ Trending Token: {ticker} is making headlines! 📈\n\n🔗 Contract Address: {token_address}\n\n📉 See the latest data: {dexscreener_url}\n\n💬 Connect on Telegram: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"💥 {ticker} is breaking out! 🚀\n\n🔗 Contract Address: {token_address}\n\n📊 Check the latest chart: {dexscreener_url}\n\n💬 Join the community chat: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"📈 {ticker} is making a big move! 🔥\n\n📝 Contract: {token_address}\n\n📉 Dive into the chart: {dexscreener_url}\n\n👥 Discuss on Telegram: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"⚡️ Hype Alert: {ticker} is trending hard! 🚀\n\n🔍 Contract Info: {token_address}\n\n📊 Analyze the trend: {dexscreener_url}\n\n🗨️ Join the Telegram group: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"🚀 Market Buzz: {ticker} is catching fire! 🔥\n\n🔗 Contract Address: {token_address}\n\n📈 View the chart here: {dexscreener_url}\n\n💬 Chat with traders: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"🔥 Hot Pick: {ticker} is the talk of the market! 📈\n\n📝 Contract: {token_address}\n\n📊 Explore the latest chart: {dexscreener_url}\n\n👥 Join the discussion: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"💹 {ticker} is making waves! 🌊\n\n🔗 Contract: {token_address}\n\n📈 Chart the rise: {dexscreener_url}\n\n💬 Connect on Telegram: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"🚀 Rising Star: {ticker} is gaining momentum! 🌟\n\n🔎 Contract Details: {token_address}\n\n📊 Check out the chart: {dexscreener_url}\n\n🔊 Join the conversation: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"📈 {ticker} is making headlines! 📰\n\n🔗 View Contract: {token_address}\n\n📊 Analyze the performance: {dexscreener_url}\n\n💬 Join the Telegram chat: {telegram_url}\n\n💯 Sentimental Score: {score}/100",
+        f"⚠️ Alert: {ticker} is trending upward! 🚀\n\n🔍 Contract Address: {token_address}\n\n📉 See the latest trend: {dexscreener_url}\n\n👥 Discuss on Telegram: {telegram_url}\n\n💯 Sentimental Score: {score}/100"
     ]
 
     # Generate a list of indices excluding the last used template

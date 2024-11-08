@@ -175,7 +175,16 @@ def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url,
         f"🚀 {ticker} is surging up the charts! 📈\n\n🔎 Contract: {token_address}\n📊 Check the performance: {dexscreener_url}\n💬 Join the conversation: {telegram_url}\n\n{blink_url}",
         f"🌐 Big Moves Alert: {ticker} is catching eyes! 👀\n\n📝 Contract Details: {token_address}\n📈 Analyze the chart: {dexscreener_url}\n🔊 Chat with the community: {telegram_url}\n\n{blink_url}",
         f"🔥 {ticker} is on fire! 🔥\n\n📝 Contract: {token_address}\n📊 Explore the chart: {dexscreener_url}\n👥 Join the discussion: {telegram_url}\n\n{blink_url}",
-        f"⚠️ Trending Token: {ticker} is making headlines! 📈\n\n🔗 Contract Address: {token_address}\n📉 See the latest data: {dexscreener_url}\n💬 Connect on Telegram: {telegram_url}\n\n{blink_url}"
+        f"⚠️ Trending Token: {ticker} is making headlines! 📈\n\n🔗 Contract Address: {token_address}\n📉 See the latest data: {dexscreener_url}\n💬 Connect on Telegram: {telegram_url}\n\n{blink_url}",
+        f"💥 {ticker} is breaking out! 🚀\n\n🔗 Contract Address: {token_address}\n📊 Check the latest chart: {dexscreener_url}\n💬 Join the community chat: {telegram_url}\n\n{blink_url}",
+        f"📈 {ticker} is making a big move! 🔥\n\n📝 Contract: {token_address}\n📉 Dive into the chart: {dexscreener_url}\n👥 Discuss on Telegram: {telegram_url}\n\n{blink_url}",
+        f"⚡️ Hype Alert: {ticker} is trending hard! 🚀\n\n🔍 Contract Info: {token_address}\n📊 Analyze the trend: {dexscreener_url}\n🗨️ Join the Telegram group: {telegram_url}\n\n{blink_url}",
+        f"🚀 Market Buzz: {ticker} is catching fire! 🔥\n\n🔗 Contract Address: {token_address}\n📈 View the chart here: {dexscreener_url}\n💬 Chat with traders: {telegram_url}\n\n{blink_url}",
+        f"🔥 Hot Pick: {ticker} is the talk of the market! 📈\n\n📝 Contract: {token_address}\n📊 Explore the latest chart: {dexscreener_url}\n👥 Join the discussion: {telegram_url}\n\n{blink_url}",
+        f"💹 {ticker} is making waves! 🌊\n\n🔗 Contract: {token_address}\n📈 Chart the rise: {dexscreener_url}\n💬 Connect on Telegram: {telegram_url}\n\n{blink_url}",
+        f"🚀 Rising Star: {ticker} is gaining momentum! 🌟\n\n🔎 Contract Details: {token_address}\n📊 Check out the chart: {dexscreener_url}\n🔊 Join the conversation: {telegram_url}\n\n{blink_url}",
+        f"📈 {ticker} is making headlines! 📰\n\n🔗 View Contract: {token_address}\n📊 Analyze the performance: {dexscreener_url}\n💬 Join the Telegram chat: {telegram_url}\n\n{blink_url}",
+        f"⚠️ Alert: {ticker} is trending upward! 🚀\n\n🔍 Contract Address: {token_address}\n📉 See the latest trend: {dexscreener_url}\n👥 Discuss on Telegram: {telegram_url}\n\n{blink_url}"
     ]
 
     # Generate a list of indices excluding the last used template
