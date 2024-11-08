@@ -127,7 +127,7 @@ async def handler(event):
 
             # Append RugCheck data to the message if available
             if rugcheck_data:
-                telegram_msg += f"\n\n🛡️ Rug check report:\n\t- Risks: {', '.join(rugcheck_data['risks'])}\n\t- LP Providers: {rugcheck_data['totalLPProviders']}\n\t- Market Liquidity: ${rugcheck_data['totalMarketLiquidity']}"
+                telegram_msg += f"\n\n🛡️ Rug check report:\n\t- Risks: {', '.join(rugcheck_data['risks'])}\n\t- LP Providers: {rugcheck_data['totalLPProviders']}\n\t- Market Liquidity: ${int(rugcheck_data['totalMarketLiquidity'])}"
 
             # Send the message to Telegram
             await send_message_to_telegram(telegram_msg)
