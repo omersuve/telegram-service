@@ -117,7 +117,7 @@ async def handler(event):
             await post_twitter({'text': tweet_content_random})
 
             # Generate Telegram content with RugCheck data
-            telegram_message = generate_telegram_content(
+            telegram_msg = generate_telegram_content(
                 ticker=ticker,
                 token_address=token_address,
                 dexscreener_url=dexscreener_url,
@@ -127,10 +127,10 @@ async def handler(event):
 
             # Append RugCheck data to the message if available
             if rugcheck_data:
-                telegram_message += f"\n\n🛡️ RugCheck Report:\n- Risks: {rugcheck_data['risks']}\n- LP Providers: {rugcheck_data['totalLPProviders']}\n- Market Liquidity: ${rugcheck_data['totalMarketLiquidity']}"
+                telegram_msg += f"\n\n🛡️ RugCheck Report:\n- Risks: {rugcheck_data['risks']}\n- LP Providers: {rugcheck_data['totalLPProviders']}\n- Market Liquidity: ${rugcheck_data['totalMarketLiquidity']}"
 
             # Send the message to Telegram
-            await send_message_to_telegram(telegram_message)
+            await send_message_to_telegram(telegram_msg)
             print("Telegram message sent successfully.")
 
             data = {
