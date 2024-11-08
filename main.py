@@ -13,6 +13,7 @@ from trending_sentiment import fetch_tweets_and_analyze, post_twitter, generate_
 from rugcheck import get_rugcheck_report
 import schedule
 import time
+from telegram_message import generate_telegram_content, send_message_to_telegram
 
 # Load environment variables from .env file
 load_dotenv()
@@ -112,11 +113,25 @@ async def handler(event):
                 blink_url=blink_url
             )
 
-            print("tweet_content_random", tweet_content_random)
-            print("tweet_content_random_len", len(tweet_content_random))
-
             # Send the formatted tweet to Twitter
             await post_twitter({'text': tweet_content_random})
+
+            # Generate Telegram content with RugCheck data
+            telegram_message = generate_telegram_content(
+                ticker=ticker,
+                token_address=token_address,
+                dexscreener_url=dexscreener_url,
+                telegram_url=telegram_url,
+                score=score
+            )
+
+            # Append RugCheck data to the message if available
+            if rugcheck_data:
+                telegram_message += f"\n\n🛡️ RugCheck Report:\n- Risks: {rugcheck_data['risks']}\n- LP Providers: {rugcheck_data['totalLPProviders']}\n- Market Liquidity: ${rugcheck_data['totalMarketLiquidity']}"
+
+            # Send the message to Telegram
+            await send_message_to_telegram(telegram_message)
+            print("Telegram message sent successfully.")
 
             data = {
                 "id": message_id,
