@@ -7,9 +7,7 @@ import pusher
 import redis.asyncio as redis
 from dotenv import load_dotenv
 from telethon import TelegramClient, events
-from discord_message import start_discord_bot, stop_discord_bot, send_message_to_discord, send_log_to_discord, \
-    send_error_log_to_discord
-from trending_sentiment import fetch_tweets_and_analyze, post_twitter, generate_tweet_content
+from trending_sentiment import fetch_tweets_and_analyze
 from rugcheck import get_rugcheck_report
 import schedule
 import time
@@ -105,16 +103,16 @@ async def handler(event):
             # Generate the DexScreener URL
             dexscreener_url = f"https://dexscreener.com/solana/{token_address}"
 
-            tweet_content_random = generate_tweet_content(
-                ticker=ticker,
-                token_address=token_address,
-                dexscreener_url=dexscreener_url,
-                telegram_url=telegram_url,
-                blink_url=blink_url
-            )
-
-            # Send the formatted tweet to Twitter
-            await post_twitter({'text': tweet_content_random})
+            # tweet_content_random = generate_tweet_content(
+            #     ticker=ticker,
+            #     token_address=token_address,
+            #     dexscreener_url=dexscreener_url,
+            #     telegram_url=telegram_url,
+            #     blink_url=blink_url
+            # )
+            #
+            # # Send the formatted tweet to Twitter
+            # await post_twitter({'text': tweet_content_random})
 
             # Generate Telegram content with RugCheck data
             telegram_msg = generate_telegram_content(
@@ -152,7 +150,7 @@ async def handler(event):
             print("Message published successfully")
 
             # Send message to Discord
-            await send_message_to_discord(data)
+            # await send_message_to_discord(data)
 
             # Start the Twitter sentiment analysis and schedule it to run every hour for total 4 times
             async def run_analysis():
@@ -175,11 +173,12 @@ async def handler(event):
 
                                 pusher_client.trigger("my-channel", "my-event", {"message": "NEW DATA CHANGED!"})
                                 # Send log to Discord
-                                await send_log_to_discord(json.dumps(msg_data))
+                                # await send_log_to_discord(json.dumps(msg_data))
                                 break
 
                 except Exception as exception:
-                    await send_error_log_to_discord(str(exception))
+                    print(exception)
+                    # await send_error_log_to_discord(str(exception))
 
             await asyncio.create_task(run_analysis())
 
@@ -197,14 +196,14 @@ async def main():
     try:
         # Start the Discord bot and Telegram client concurrently
         await asyncio.gather(
-            start_discord_bot(),
+            # start_discord_bot(),
             start_telegram_client()
         )
     except Exception as e:
         print(f"Error in Telegram client: {e}")
-    finally:
+    # finally:
         # Stop the Discord bot if the Telegram client disconnects
-        await stop_discord_bot()
+        # await stop_discord_bot()
 
 
 if __name__ == "__main__":

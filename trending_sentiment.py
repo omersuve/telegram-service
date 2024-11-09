@@ -6,7 +6,6 @@ import requests
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from twikit import Client, Tweet
-from discord_message import send_error_log_to_discord
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -73,7 +72,7 @@ async def login_and_save_cookies(account):
         print(f"Logged in and saved new cookies for {account['username']}.")
     except Exception as e:
         print(f"Failed to log in for {account['username']}: {str(e)}")
-        await send_error_log_to_discord(f"Failed to log in for {account['username']}: {str(e)}")
+        # await send_error_log_to_discord(f"Failed to log in for {account['username']}: {str(e)}")
         return False
     return True
 
@@ -163,56 +162,56 @@ def scale_score_to_range(score, max_score, target_range=(0, 100)):
     return int(min(round(scaled_score), max_target))
 
 
-def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url, blink_url):
-    global last_template_index
+# def generate_tweet_content(ticker, token_address, dexscreener_url, telegram_url, blink_url):
+#     global last_template_index
+#
+#     templates = [
+#         f"🚀 Trending Alert: {ticker} is on the rise! 💹\n\n📄 Contract: {token_address}\n📊 Check the chart: {dexscreener_url}\n💬 Join the chat: {telegram_url}\n\n{blink_url}",
+#         f"🌟 {ticker} just made waves! 🌊\n\n🔍 View contract: {token_address}\n📈 Chart it out: {dexscreener_url}\n👥 Telegram: {telegram_url}\n\n{blink_url}",
+#         f"🔥 Hot New Trend: {ticker}! 🚀\n\n📄 Contract Address: {token_address}\n📊 View chart: {dexscreener_url}\n💬 Telegram Group: {telegram_url}\n\n{blink_url}",
+#         f"🚨 Attention! {ticker} is gaining traction! 📈\n\n🔗 Contract: {token_address}\n📉 See the latest chart: {dexscreener_url}\n🗨️ Connect on Telegram: {telegram_url}\n\n{blink_url}",
+#         f"⚡️ {ticker} is trending now! ⚡️\n\n📜 Contract Info: {token_address}\n📊 Dive into the chart: {dexscreener_url}\n📣 Join the community: {telegram_url}\n\n{blink_url}",
+#         f"🚀 {ticker} is surging up the charts! 📈\n\n🔎 Contract: {token_address}\n📊 Check the performance: {dexscreener_url}\n💬 Join the conversation: {telegram_url}\n\n{blink_url}",
+#         f"🌐 Big Moves Alert: {ticker} is catching eyes! 👀\n\n📝 Contract Details: {token_address}\n📈 Analyze the chart: {dexscreener_url}\n🔊 Chat with the community: {telegram_url}\n\n{blink_url}",
+#         f"🔥 {ticker} is on fire! 🔥\n\n📝 Contract: {token_address}\n📊 Explore the chart: {dexscreener_url}\n👥 Join the discussion: {telegram_url}\n\n{blink_url}",
+#         f"⚠️ Trending Token: {ticker} is making headlines! 📈\n\n🔗 Contract Address: {token_address}\n📉 See the latest data: {dexscreener_url}\n💬 Connect on Telegram: {telegram_url}\n\n{blink_url}",
+#         f"💥 {ticker} is breaking out! 🚀\n\n🔗 Contract Address: {token_address}\n📊 Check the latest chart: {dexscreener_url}\n💬 Join the community chat: {telegram_url}\n\n{blink_url}",
+#         f"📈 {ticker} is making a big move! 🔥\n\n📝 Contract: {token_address}\n📉 Dive into the chart: {dexscreener_url}\n👥 Discuss on Telegram: {telegram_url}\n\n{blink_url}",
+#         f"⚡️ Hype Alert: {ticker} is trending hard! 🚀\n\n🔍 Contract Info: {token_address}\n📊 Analyze the trend: {dexscreener_url}\n🗨️ Join the Telegram group: {telegram_url}\n\n{blink_url}",
+#         f"🚀 Market Buzz: {ticker} is catching fire! 🔥\n\n🔗 Contract Address: {token_address}\n📈 View the chart here: {dexscreener_url}\n💬 Chat with traders: {telegram_url}\n\n{blink_url}",
+#         f"🔥 Hot Pick: {ticker} is the talk of the market! 📈\n\n📝 Contract: {token_address}\n📊 Explore the latest chart: {dexscreener_url}\n👥 Join the discussion: {telegram_url}\n\n{blink_url}",
+#         f"💹 {ticker} is making waves! 🌊\n\n🔗 Contract: {token_address}\n📈 Chart the rise: {dexscreener_url}\n💬 Connect on Telegram: {telegram_url}\n\n{blink_url}",
+#         f"🚀 Rising Star: {ticker} is gaining momentum! 🌟\n\n🔎 Contract Details: {token_address}\n📊 Check out the chart: {dexscreener_url}\n🔊 Join the conversation: {telegram_url}\n\n{blink_url}",
+#         f"📈 {ticker} is making headlines! 📰\n\n🔗 View Contract: {token_address}\n📊 Analyze the performance: {dexscreener_url}\n💬 Join the Telegram chat: {telegram_url}\n\n{blink_url}",
+#         f"⚠️ Alert: {ticker} is trending upward! 🚀\n\n🔍 Contract Address: {token_address}\n📉 See the latest trend: {dexscreener_url}\n👥 Discuss on Telegram: {telegram_url}\n\n{blink_url}"
+#     ]
+#
+#     # Generate a list of indices excluding the last used template
+#     available_indices = [i for i in range(len(templates)) if i != last_template_index]
+#
+#     # Select a random index from the available options
+#     selected_index = random.choice(available_indices)
+#
+#     # Update the last used template index
+#     last_template_index = selected_index
+#
+#     # Return the selected template
+#     return templates[selected_index]
 
-    templates = [
-        f"🚀 Trending Alert: {ticker} is on the rise! 💹\n\n📄 Contract: {token_address}\n📊 Check the chart: {dexscreener_url}\n💬 Join the chat: {telegram_url}\n\n{blink_url}",
-        f"🌟 {ticker} just made waves! 🌊\n\n🔍 View contract: {token_address}\n📈 Chart it out: {dexscreener_url}\n👥 Telegram: {telegram_url}\n\n{blink_url}",
-        f"🔥 Hot New Trend: {ticker}! 🚀\n\n📄 Contract Address: {token_address}\n📊 View chart: {dexscreener_url}\n💬 Telegram Group: {telegram_url}\n\n{blink_url}",
-        f"🚨 Attention! {ticker} is gaining traction! 📈\n\n🔗 Contract: {token_address}\n📉 See the latest chart: {dexscreener_url}\n🗨️ Connect on Telegram: {telegram_url}\n\n{blink_url}",
-        f"⚡️ {ticker} is trending now! ⚡️\n\n📜 Contract Info: {token_address}\n📊 Dive into the chart: {dexscreener_url}\n📣 Join the community: {telegram_url}\n\n{blink_url}",
-        f"🚀 {ticker} is surging up the charts! 📈\n\n🔎 Contract: {token_address}\n📊 Check the performance: {dexscreener_url}\n💬 Join the conversation: {telegram_url}\n\n{blink_url}",
-        f"🌐 Big Moves Alert: {ticker} is catching eyes! 👀\n\n📝 Contract Details: {token_address}\n📈 Analyze the chart: {dexscreener_url}\n🔊 Chat with the community: {telegram_url}\n\n{blink_url}",
-        f"🔥 {ticker} is on fire! 🔥\n\n📝 Contract: {token_address}\n📊 Explore the chart: {dexscreener_url}\n👥 Join the discussion: {telegram_url}\n\n{blink_url}",
-        f"⚠️ Trending Token: {ticker} is making headlines! 📈\n\n🔗 Contract Address: {token_address}\n📉 See the latest data: {dexscreener_url}\n💬 Connect on Telegram: {telegram_url}\n\n{blink_url}",
-        f"💥 {ticker} is breaking out! 🚀\n\n🔗 Contract Address: {token_address}\n📊 Check the latest chart: {dexscreener_url}\n💬 Join the community chat: {telegram_url}\n\n{blink_url}",
-        f"📈 {ticker} is making a big move! 🔥\n\n📝 Contract: {token_address}\n📉 Dive into the chart: {dexscreener_url}\n👥 Discuss on Telegram: {telegram_url}\n\n{blink_url}",
-        f"⚡️ Hype Alert: {ticker} is trending hard! 🚀\n\n🔍 Contract Info: {token_address}\n📊 Analyze the trend: {dexscreener_url}\n🗨️ Join the Telegram group: {telegram_url}\n\n{blink_url}",
-        f"🚀 Market Buzz: {ticker} is catching fire! 🔥\n\n🔗 Contract Address: {token_address}\n📈 View the chart here: {dexscreener_url}\n💬 Chat with traders: {telegram_url}\n\n{blink_url}",
-        f"🔥 Hot Pick: {ticker} is the talk of the market! 📈\n\n📝 Contract: {token_address}\n📊 Explore the latest chart: {dexscreener_url}\n👥 Join the discussion: {telegram_url}\n\n{blink_url}",
-        f"💹 {ticker} is making waves! 🌊\n\n🔗 Contract: {token_address}\n📈 Chart the rise: {dexscreener_url}\n💬 Connect on Telegram: {telegram_url}\n\n{blink_url}",
-        f"🚀 Rising Star: {ticker} is gaining momentum! 🌟\n\n🔎 Contract Details: {token_address}\n📊 Check out the chart: {dexscreener_url}\n🔊 Join the conversation: {telegram_url}\n\n{blink_url}",
-        f"📈 {ticker} is making headlines! 📰\n\n🔗 View Contract: {token_address}\n📊 Analyze the performance: {dexscreener_url}\n💬 Join the Telegram chat: {telegram_url}\n\n{blink_url}",
-        f"⚠️ Alert: {ticker} is trending upward! 🚀\n\n🔍 Contract Address: {token_address}\n📉 See the latest trend: {dexscreener_url}\n👥 Discuss on Telegram: {telegram_url}\n\n{blink_url}"
-    ]
 
-    # Generate a list of indices excluding the last used template
-    available_indices = [i for i in range(len(templates)) if i != last_template_index]
-
-    # Select a random index from the available options
-    selected_index = random.choice(available_indices)
-
-    # Update the last used template index
-    last_template_index = selected_index
-
-    # Return the selected template
-    return templates[selected_index]
-
-
-async def post_twitter(message_json):
-    # Perform the synchronous POST request using requests
-    try:
-        response = requests.post(
-            url="http://blinks-python.railway.internal:5001/post_tweet",
-            json=message_json,
-            timeout=20  # Set a timeout for the request
-        )
-        # Print the response from the server
-        print(response.json())
-    except requests.exceptions.RequestException as e:
-        # Handle any exceptions (e.g., connection errors, timeouts)
-        print(f"Failed to post the message to Twitter: {e}")
+# async def post_twitter(message_json):
+#     # Perform the synchronous POST request using requests
+#     try:
+#         response = requests.post(
+#             url="http://blinks-python.railway.internal:5001/post_tweet",
+#             json=message_json,
+#             timeout=20  # Set a timeout for the request
+#         )
+#         # Print the response from the server
+#         print(response.json())
+#     except requests.exceptions.RequestException as e:
+#         # Handle any exceptions (e.g., connection errors, timeouts)
+#         print(f"Failed to post the message to Twitter: {e}")
 
 
 async def fetch_tweets_and_analyze(ticker: str, attempts=0):
@@ -289,7 +288,7 @@ async def fetch_tweets_and_analyze(ticker: str, attempts=0):
         # Handle "Could not authenticate you" error by re-logging in
         if 'Could not authenticate you' in str(err):
             print(f"Re-logging in for {account['username']} due to authentication error.")
-            await send_error_log_to_discord(f"Re-logging in for {account['username']} due to authentication error.")
+            # await send_error_log_to_discord(f"Re-logging in for {account['username']} due to authentication error.")
             try:
                 await login_and_save_cookies(account)  # Attempt to log in again
                 return await fetch_tweets_and_analyze(ticker, attempts)  # Retry after login
@@ -297,13 +296,13 @@ async def fetch_tweets_and_analyze(ticker: str, attempts=0):
                 # Handle login errors (e.g., "LoginFlow" error) and move to the next account
                 if 'LoginFlow' in str(login_err):
                     print(f"LoginFlow error encountered for {account['username']}. Switching to next account.")
-                    await send_error_log_to_discord(
-                        f"LoginFlow error for {account['username']}. Moving to next account.")
+                    # await send_error_log_to_discord(
+                    #     f"LoginFlow error for {account['username']}. Moving to next account.")
                     current_account_index = (current_account_index + 1) % len(accounts)  # Move to next account
                     return await fetch_tweets_and_analyze(ticker, attempts + 1)
         else:
             print(f"Error: {str(err)}")
-            await send_error_log_to_discord(f"Error fetching tweets for {ticker}: {str(err)}")
+            # await send_error_log_to_discord(f"Error fetching tweets for {ticker}: {str(err)}")
             # Move to next account
             current_account_index = (current_account_index + 1) % len(accounts)
             return await fetch_tweets_and_analyze(ticker, attempts + 1)
