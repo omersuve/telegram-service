@@ -136,7 +136,8 @@ async def handler(event):
                 "text": message.text,
                 "date": message.date.isoformat(),
                 "scores": [score, None, None],  # Initialize with the first score and placeholders
-                "rugcheck": rugcheck_data  # Possibly None
+                "rugcheck": rugcheck_data,  # Possibly None
+                "blink_url": blink_url
             }
             print(data)
 
