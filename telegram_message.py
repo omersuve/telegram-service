@@ -8,6 +8,7 @@ load_dotenv()
 
 base_url = f"https://api.telegram.org/bot{os.environ.get('TELEGRAM_BOT_TOKEN')}/sendMessage"
 chat_id = os.environ.get('TELEGRAM_CHAT_ID')
+trendings_topic_id = os.environ.get('TELEGRAM_TOPIC_ID')
 
 last_template_index = -1
 
@@ -52,6 +53,7 @@ def generate_telegram_content(ticker, token_address, dexscreener_url, telegram_u
 async def send_message_to_telegram(text: str):
     requests.get(base_url, data={
         "chat_id": chat_id,
+        "message_thread_id": trendings_topic_id,
         "disable_web_page_preview": True,
         "text": text
     })
