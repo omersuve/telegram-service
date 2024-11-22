@@ -66,6 +66,20 @@ async def handler(event):
                 print("Token address not found in the message text. Exiting handler.")
                 return
 
+            # Fetch token details from DexScreener API
+            dex_api_url = f"https://api.dexscreener.io/latest/dex/tokens/{token_address}"
+            response = await asyncio.to_thread(requests.get, dex_api_url)
+            dex_data = response.json().get("pairs", [{}])[0]
+
+            # Extract additional details from DexScreener
+            market_cap = dex_data.get("marketCap", "N/A")
+            created_at = dex_data.get("pairCreatedAt")
+            volume_1h = dex_data.get("volume", {}).get("h1", "N/A")
+
+            # Convert `pairCreatedAt` to a human-readable format
+            if created_at:
+                created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(created_at / 1000))
+
             rugcheck_data = None
 
             if token_address:
@@ -123,6 +137,10 @@ async def handler(event):
                 score=score
             )
 
+            telegram_msg += f"\n\n💰 Market Cap: ${market_cap}"
+            telegram_msg += f"\n📅 Created At: {created_at}" if created_at else ""
+            telegram_msg += f"\n📊 1 Hour Volume: ${volume_1h}"
+
             # Append RugCheck data to the message if available
             if rugcheck_data:
                 telegram_msg += f"\n\n🛡️ Rug check report:\n\t- Risks: {', '.join(rugcheck_data['risks'])}\n\t- LP Providers: {rugcheck_data['totalLPProviders']}\n\t- Market Liquidity: ${int(rugcheck_data['totalMarketLiquidity'])}"
@@ -137,6 +155,9 @@ async def handler(event):
                 "date": message.date.isoformat(),
                 "scores": [score, None, None],  # Initialize with the first score and placeholders
                 "rugcheck": rugcheck_data,  # Possibly None
+                "marketCap": market_cap,
+                "createdAt": created_at,
+                "volume1h": volume_1h,
                 "blink_url": blink_url
             }
             print(data)
