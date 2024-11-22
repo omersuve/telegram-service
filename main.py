@@ -12,6 +12,7 @@ from rugcheck import get_rugcheck_report
 import schedule
 import time
 from telegram_message import generate_telegram_content, send_message_to_telegram
+import requests
 
 # Load environment variables from .env file
 load_dotenv()
