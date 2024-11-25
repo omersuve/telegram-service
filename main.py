@@ -13,6 +13,7 @@ import schedule
 import time
 from telegram_message import generate_telegram_content, send_message_to_telegram
 import requests
+from holderscan import get_holder_count
 
 # Load environment variables from .env file
 load_dotenv()
@@ -66,6 +67,14 @@ async def handler(event):
             if not token_address:
                 print("Token address not found in the message text. Exiting handler.")
                 return
+
+            # Fetch the holder count using the holderscan.py module
+            holder_count = await asyncio.to_thread(get_holder_count, token_address)
+
+            if holder_count is not None:
+                print(f"Holder count for {token_address}: {holder_count}")
+            else:
+                print(f"Failed to fetch holder count for {token_address}.")
 
             # Fetch token details from DexScreener API
             dex_api_url = f"https://api.dexscreener.io/latest/dex/tokens/{token_address}"
@@ -135,7 +144,8 @@ async def handler(event):
                 token_address=token_address,
                 dexscreener_url=dexscreener_url,
                 telegram_url=telegram_url,
-                score=score
+                score=score,
+                holders=holder_count
             )
 
             telegram_msg += f"\n\n💰 Market Cap: ${market_cap}"
@@ -159,7 +169,8 @@ async def handler(event):
                 "marketCap": market_cap,
                 "createdAt": created_at,
                 "volume1h": volume_1h,
-                "blink_url": blink_url
+                "blink_url": blink_url,
+                "holders": holder_count
             }
             print(data)
 

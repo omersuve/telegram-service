@@ -13,7 +13,7 @@ trendings_topic_id = os.environ.get('TELEGRAM_TOPIC_ID')
 last_template_index = -1
 
 
-def generate_telegram_content(ticker, token_address, dexscreener_url, telegram_url, score):
+def generate_telegram_content(ticker, token_address, dexscreener_url, telegram_url, score, holders):
     global last_template_index
 
     templates = [
@@ -37,6 +37,9 @@ def generate_telegram_content(ticker, token_address, dexscreener_url, telegram_u
         f"⚠️ Alert: {ticker} is trending upward! 🚀\n\n🔍 Contract Address: {token_address}\n\n📉 See the latest trend: {dexscreener_url}\n\n👥 Discuss on Telegram: {telegram_url}\n\n💯 Sentimental Score: {score}/100"
     ]
 
+    # Append holder count if available
+    holder_text = f"\n\n👥 Holder Count: {holders}" if holders is not None else ""
+
     # Generate a list of indices excluding the last used template
     available_indices = [i for i in range(len(templates)) if i != last_template_index]
 
@@ -47,7 +50,7 @@ def generate_telegram_content(ticker, token_address, dexscreener_url, telegram_u
     last_template_index = selected_index
 
     # Return the selected template
-    return templates[selected_index]
+    return templates[selected_index] + holder_text
 
 
 async def send_message_to_telegram(text: str):
