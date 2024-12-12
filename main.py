@@ -7,6 +7,7 @@ import pusher
 import redis.asyncio as redis
 from dotenv import load_dotenv
 from telethon import TelegramClient, events
+from agent_message import generate_agent_knowledge, send_agent_knowledge_to_api
 from trending_sentiment import fetch_tweets_and_analyze
 from rugcheck import get_rugcheck_report
 import schedule
@@ -173,6 +174,11 @@ async def handler(event):
                 "holders": holder_count
             }
             print(data)
+
+            # Generate knowledge message
+            agent_knowledge_message = generate_agent_knowledge(data)
+            print("agent_knowledge_message", agent_knowledge_message)
+            send_agent_knowledge_to_api(agent_knowledge_message)
 
             await redis_client.lpush("latest_messages", json.dumps(data))
             await redis_client.ltrim("latest_messages", 0, 9)
