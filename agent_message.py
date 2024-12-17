@@ -7,19 +7,30 @@ load_dotenv()
 API_KEY = os.getenv("AGENT_NODEJS_API_KEY")
 
 
+def format_large_number(value):
+    if isinstance(value, (int, float)):
+        if value >= 1_000_000:
+            return f"${round(value / 1_000_000)}M"
+        elif value >= 1_000:
+            return f"${round(value / 1_000)}K"
+        else:
+            return f"${int(value)}"
+    return value
+
+
 def generate_agent_knowledge(data):
     """
     Generates a formatted agent knowledge message from extracted data.
     """
     try:
-        name = data.get("text", "").split("**")[1].strip()
-        token_name = data.get("tokenName")
-        token_address = data.get("tokenAddress")
-        score = data.get("scores", [0])[0]
-        total_liquidity = data.get("rugcheck", {}).get("totalMarketLiquidity", "N/A")
-        market_cap = data.get("marketCap", "N/A")
-        volume = data.get("volume1h", "N/A")
+        name = data.get("text", "").split("**")[1].split(" has ")[0].strip()
+        token_name = data.get("text", "").split("Token: ")[1].split("\n")[0].strip()
+        token_address = data.get("text", "").split("Dexscreener: [")[1].split("]")[0].split("(")[1].split(")")[0].split("/")[-1]
+        total_liquidity = format_large_number(data.get("rugcheck", {}).get("totalMarketLiquidity", "N/A"))
+        market_cap = format_large_number(data.get("marketCap", "N/A"))
+        volume = format_large_number(data.get("volume1h", "N/A"))
         holders = data.get("holders", "N/A")
+        score = data.get("scores", [0])[0]
         created_at = data.get("createdAt", "N/A")
 
         knowledge = (
@@ -34,7 +45,9 @@ def generate_agent_knowledge(data):
             f"Holders: {holders}"
         )
 
-        return knowledge.strip()
+        # Remove entries with None values
+        knowledge = [line for line in knowledge if "None" not in line and "N/A" not in line]
+        return "\n".join(knowledge)
     except Exception as e:
         print(f"Error generating agent knowledge: {e}")
         return None
@@ -49,7 +62,7 @@ def send_agent_knowledge_to_api(message):
         return
 
     headers = {"x-api-key": API_KEY}
-    payload = {"news": message}
+    payload = {"trends": message}
 
     try:
         response = requests.post("https://agent-knowledge-gen-news-trends-production.up.railway.app/trends",
